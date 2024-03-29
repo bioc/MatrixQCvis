@@ -7,7 +7,8 @@
 dimensionReductionPlot(
   tbl,
   se,
-  highlight = c("none", colnames(se@colData)),
+  color = c("none", colnames(se@colData)),
+  size = c("none", colnames(se@colData)),
   explainedVar = NULL,
   x_coord,
   y_coord,
@@ -20,7 +21,10 @@ dimensionReductionPlot(
 
 \item{se}{\code{SummarizedExperiment}}
 
-\item{highlight}{\code{character}, one of \code{"none"} or 
+\item{color}{\code{character}, one of \code{"none"} or 
+\code{colnames(se@colData)}}
+
+\item{size}{\code{character}, one of \code{"none"} or 
 \code{colnames(se@colData)}}
 
 \item{explainedVar}{NULL or named \code{numeric}, if \code{numeric} 
@@ -66,7 +70,7 @@ se <- SummarizedExperiment(assay = a, rowData = rD, colData = cD)
 
 pca <- dimensionReduction(x = assay(se), type = "PCA", params = list())[[1]]
 
-dimensionReductionPlot(tbl = pca, se = se, highlight = "type", 
+dimensionReductionPlot(tbl = pca, se = se, color = "type", size = "none",
     x_coord = "PC1", y_coord = "PC2")
 
 }
