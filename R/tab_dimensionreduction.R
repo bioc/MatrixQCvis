@@ -155,13 +155,14 @@ dimensionReduction <- function(x,
 #'             dimnames = list(seq_len(10), paste("sample", seq_len(10))))
 #' set.seed(1)
 #' a <- a + rnorm(100)
-#' cD <- data.frame(name = colnames(a), type = c(rep("1", 5), rep("2", 5)))
+#' cD <- data.frame(name = colnames(a), type = c(rep("1", 5), rep("2", 5)),
+#'   median_vals = apply(a, 2, median))
 #' rD <- data.frame(spectra = rownames(a))
 #' se <- SummarizedExperiment(assay = a, rowData = rD, colData = cD)
 #' 
 #' pca <- dimensionReduction(x = assay(se), type = "PCA", params = list())[[1]]
 #' 
-#' dimensionReductionPlot(tbl = pca, se = se, color = "type", size = "none",
+#' dimensionReductionPlot(tbl = pca, se = se, color = "type", size = "median_vals",
 #'     x_coord = "PC1", y_coord = "PC2")
 #'
 #' @author Thomas Naake
@@ -179,6 +180,7 @@ dimensionReductionPlot <- function(tbl, se,
     size = c("none", colnames(se@colData)), 
     explainedVar = NULL, x_coord, y_coord, height = 600, interactive = TRUE) {
     
+    ## match arguments
     color <- match.arg(color)
     color <- make.names(color)
     size <- match.arg(size)
@@ -189,14 +191,27 @@ dimensionReductionPlot <- function(tbl, se,
     cD <- se@colData |> as.data.frame()
     colnames(cD) <- make.names(colnames(cD))
     cD[["name"]] <- rownames(cD)
+    tT <- c("text")
     
-    if (color == "none") {
-        tT <- c("text")
-    } else {
+    ## adjust tbl and tooltip depending on the color argument
+    if (color != "none") {
         cD_cut <- data.frame(name = cD[["name"]], color = cD[[color]])
-        tbl <- dplyr::left_join(tbl, cD_cut, by = "name", copy = TRUE)
-        tT <- c("text", "color")
+        tT <- c(tT, "color")
+    } else {
+        cD_cut <- data.frame(name = cD[["name"]], color = as.factor(0))
     }
+    tbl <- dplyr::left_join(tbl, cD_cut, by = "name", copy = TRUE)
+    
+    
+    
+    ## adjust tbl and tooltip depending on the size argument
+    if (size != "none") {
+        cD_cut <- data.frame(name = cD[["name"]], size = cD[[size]])
+        tT <- c(tT, "size")
+    } else {
+        cD_cut <- data.frame(name = cD[["name"]], size = 1)
+    }
+    tbl <- dplyr::left_join(tbl, cD_cut, by = "name", copy = TRUE)
     
     ## do the actual plotting
     g <- ggplot2::ggplot(tbl, ggplot2::aes(x = !!ggplot2::sym(x_coord), 
@@ -212,15 +227,28 @@ dimensionReductionPlot <- function(tbl, se,
         g <- g + ggplot2::xlab(x_coord) + ggplot2::ylab(y_coord) 
     }
     
-    if (color == "none") {
+    ## color and size
+    if (color == "none" & size == "none") {
         g <- g + ggplot2::geom_point()
-    } else {
+    } 
+    if (color != "none" & size == "none") {
         g <- g + ggplot2::geom_point(
             ggplot2::aes(color = !!ggplot2::sym("color")))
+    } 
+    if (color == "none" & size != "none") {
+        g <- g + ggplot2::geom_point(
+            ggplot2::aes(size = !!ggplot2::sym("size")))
+    }
+    if (color != "none" & size != "none") {
+        g <- g + ggplot2::geom_point(
+            ggplot2::aes(color = !!ggplot2::sym("color"), 
+                size = !!ggplot2::sym("size")))
     }
     
+    ## add theme
     g <- g + ggplot2::theme_classic()
 
+    ## turn into interactive if TRUE, return the plots
     if (interactive) {
         g <- g + ggplot2::theme(legend.position = "none") 
         plotly::ggplotly(g, tooltip = tT, height = height, width = height)
