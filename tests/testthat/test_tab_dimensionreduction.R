@@ -137,7 +137,7 @@ test_that("dimensionReductionPlot", {
         x_coord = "test", y_coord = "PC2"), 
         "object 'test' not found")
     expect_error(dimensionReductionPlot(tbl = tbl[, -11], se = se, color = "none", 
-        x_coord = "PC1", y_coord = "PC2"), "object 'name' not found")
+        x_coord = "PC1", y_coord = "PC2"), "must be present in the data")
     expect_error(dimensionReductionPlot(tbl = se, se = se), 
         "no applicable method for")
     expect_error(dimensionReductionPlot(tbl = tbl, se = "foo"), 
