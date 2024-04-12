@@ -111,8 +111,8 @@ createBoxplot <- function(se, orderCategory = colnames(colData(se)),
         a_out <- tibble::as_tibble(a_out)
         
     } else { ## if violin == TRUE
-        ## pivot_longer will create the columns name (containing the colnames of a)
-        ## and value (containing the actual values)
+        ## pivot_longer will create the columns name (containing the colnames 
+        ## of a) and value (containing the actual values)
         a <- tibble::as_tibble(a) 
         a_l <- tidyr::pivot_longer(data = a, cols = seq_len(ncol(a)))
     }
@@ -143,7 +143,8 @@ createBoxplot <- function(se, orderCategory = colnames(colData(se)),
             a_out <- dplyr::left_join(x = a_out, y = cD, 
                 by = c("name" = "x5at1t1g161asy"), copy = TRUE)
             a_out_o <- paste(a_out[[orderCategory]], a_out[["name"]])
-            a_out[["x_ggplot_vals"]] <- factor(x = a_out_o, levels = sort(a_o_u))
+            a_out[["x_ggplot_vals"]] <- factor(x = a_out_o, 
+                levels = sort(a_o_u))
             g <- g + geom_point(
                 ggplot2::aes(x = !!ggplot2::sym("x_ggplot_vals"), 
                     y = !!ggplot2::sym("value")), 
@@ -157,7 +158,8 @@ createBoxplot <- function(se, orderCategory = colnames(colData(se)),
             ggplot2::geom_violin()
     }
     
-    g + ggplot2::scale_x_discrete(labels = unique(a_l[["name"]])[order(a_o_u)]) +
+    g + ggplot2::scale_x_discrete(
+            labels = unique(a_l[["name"]])[order(a_o_u)]) +
         ggplot2::theme_classic() +
         ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90)) + 
         ggplot2::ggtitle(title) + ggplot2::xlab("samples")   
@@ -168,12 +170,12 @@ createBoxplot <- function(se, orderCategory = colnames(colData(se)),
 #' @title Plot the trend line for aggregated values
 #' 
 #' @description 
-#' The function \code{driftPlot} aggregates the (count/intensity) values from the 
-#' \code{assay()} slot of a \code{SummarizedExperiment} by the \code{median} or 
-#' \code{sum} of the (count/intensity) values. \code{driftPlot} then visualizes 
-#' these aggregated values and adds a trend line (using either LOESS or a 
-#' linear model) from (a subset of) the aggregated values. The subset is 
-#' specified by the arguments \code{category} and \code{level}.
+#' The function \code{driftPlot} aggregates the (count/intensity) values from 
+#' the \code{assay()} slot of a \code{SummarizedExperiment} by the \code{median} 
+#' or \code{sum} of the (count/intensity) values. \code{driftPlot} then 
+#' visualizes these aggregated values and adds a trend line (using either 
+#' LOESS or a linear model) from (a subset of) the aggregated values. The 
+#' subset is specified by the arguments \code{category} and \code{level}.
 #' 
 #' @details 
 #' The x-values are sorted according to the \code{orderCategory} argument: The 
@@ -280,7 +282,8 @@ driftPlot <- function(se, aggregation = c("median", "sum"),
 
     ## create another column which converts factors into numeric (needed for 
     ## geom_smooth)
-    tbl_subset[["x_ggplot_vals_num"]] <- as.numeric(tbl_subset[["x_ggplot_vals"]])
+    tbl_subset[["x_ggplot_vals_num"]] <- as.numeric(
+        tbl_subset[["x_ggplot_vals"]])
 
     g <- ggplot2::ggplot(tbl,
             ggplot2::aes(x = !!ggplot2::sym("x_ggplot_vals"), 
@@ -314,8 +317,8 @@ driftPlot <- function(se, aggregation = c("median", "sum"),
 #' @title Calculate coefficient of variation
 #' 
 #' @description 
-#' The function \code{cv} calculates the coefficient of variation from columns of 
-#' a matrix. The coefficients of variation are calculated according to the 
+#' The function \code{cv} calculates the coefficient of variation from columns  
+#' of a matrix. The coefficients of variation are calculated according to the 
 #' formula \code{sd(y) / mean(y) * 100} with \code{y} the column values, thus,
 #' the function returns the coefficient of variation in percentage.
 #' 
@@ -361,8 +364,8 @@ cv <- function(x, name = "raw") {
 #' @details 
 #' Internal usage in \code{shinyQC}.
 #' 
-#' @param df \code{data.frame} containing one or multiple columns containing the 
-#' coefficients of variation
+#' @param df \code{data.frame} containing one or multiple columns containing 
+#' the coefficients of variation
 #' 
 #' @examples
 #' x1 <- matrix(seq_len(10), ncol = 2)
@@ -526,8 +529,8 @@ ECDF <- function(se, sample = colnames(se),
 #'
 #' @description
 #' The function \code{distShiny} takes as an input a numerical \code{matrix} or
-#' \code{data.frame} and returns the distances between the rows and columns based
-#' on the defined \code{method} (e.g. euclidean distance). 
+#' \code{data.frame} and returns the distances between the rows and columns
+#' based on the defined \code{method} (e.g. euclidean distance). 
 #' 
 #' @details 
 #' Internal use in \code{shinyQC}.
@@ -1049,7 +1052,7 @@ MAplot <- function(tbl, group = c("all", colnames(tbl)),
     }
     
     if (group != "name") {
-        g <- g + ggplot2::facet_wrap(fm, scales = "free")# + ggplot2::theme(aspect.ratio = 1)
+        g <- g + ggplot2::facet_wrap(fm, scales = "free")
     } else {
         g <- g + ggplot2::coord_fixed()
     }
@@ -1084,7 +1087,8 @@ MAplot <- function(tbl, group = c("all", colnames(tbl)),
 #' @examples 
 #' set.seed(1)
 #' x1 <- matrix(rnorm(100), ncol = 10, nrow = 10, 
-#'     dimnames = list(paste("feature", seq_len(10)), paste("sample", seq_len(10))))
+#'     dimnames = list(paste("feature", seq_len(10)), 
+#'         paste("sample", seq_len(10))))
 #' x2 <- x1 + 5
 #' x3 <- x2 + 10
 #' 
@@ -1120,7 +1124,8 @@ createDfFeature <- function(l, feature) {
 #' @examples 
 #' set.seed(1)
 #' x1 <- matrix(rnorm(100), ncol = 10, nrow = 10, 
-#'     dimnames = list(paste("feature", seq_len(10)), paste("sample", seq_len(10))))
+#'     dimnames = list(paste("feature", seq_len(10)), 
+#'         paste("sample", seq_len(10))))
 #' x2 <- x1 + 5
 #' x3 <- x2 + 10
 #' l <- list(x1 = x1, x2 = x2, x3 = x3)
@@ -1172,7 +1177,8 @@ featurePlot <- function(df) {
 #' 
 #' @examples
 #' x1 <- matrix(seq_len(100), ncol = 10, nrow = 10, 
-#'     dimnames = list(paste("feature", seq_len(10)), paste("sample", seq_len(10))))
+#'     dimnames = list(paste("feature", seq_len(10)), 
+#'         paste("sample", seq_len(10))))
 #' x2 <- x1 + 5
 #' x3 <- x2 + 10
 #' l <- list(x1 = x1, x2 = x2, x3 = x3)
@@ -1309,8 +1315,9 @@ normalizeAssay <- function(a,
         
         if (multiplyByNormalizationValue) {
             normFactors <- apply(a_n, 2, sum, na.rm = TRUE)
-            adjustedNormFactors <- median(normFactors) / normFactors
-            a_n <- apply(a_n, 1, function(rows_i) rows_i * adjustedNormFactors)
+            adjustedNormFactors <- median(normFactors, na.rm = TRUE) / normFactors
+            a_n <- apply(a_n, 1, function(rows_i) 
+                rows_i * adjustedNormFactors)
             
             ## transpose the matrix if the a_n was transposed by apply
             if (!all(colnames(a) %in% colnames(a_n)))
@@ -1329,23 +1336,27 @@ normalizeAssay <- function(a,
             probs <- 0.75
         
         if (multiplyByNormalizationValue) {
-            normFactors <- apply(a_n, 2, function(cols_i) stats::quantile(cols_i, probs = probs, na.rm = TRUE))
-            adjustedNormFactors <- median(normFactors) / normFactors
-            a_n <- apply(a_n, 1, function(rows_i) rows_i * adjustedNormFactors)
+            normFactors <- apply(a_n, 2, function(cols_i) 
+                stats::quantile(cols_i, probs = probs, na.rm = TRUE))
+            adjustedNormFactors <- median(normFactors, na.rm = TRUE) / normFactors
+            a_n <- apply(a_n, 1, function(rows_i) 
+                rows_i * adjustedNormFactors)
             
             ## transpose the matrix if the a_n was transposed by apply
             if (!all(colnames(a) %in% colnames(a_n)))
                 a_n <- t(a_n)
         } else {
             a_n <- apply(a_n, 2,
-                function(cols_i) cols_i / stats::quantile(cols_i, probs = probs, na.rm = TRUE)) 
+                function(cols_i) cols_i / stats::quantile(cols_i, 
+                    probs = probs, na.rm = TRUE)) 
         }
         
     }
     if (method == "quantile") {
         cols_nona <- apply(a_n, 2, function(cols_i) !all(is.na(cols_i)))
         cols_nona <- names(cols_nona[cols_nona])
-        a_n[, cols_nona] <- limma::normalizeQuantiles(a_n[, cols_nona], ties = TRUE)
+        a_n[, cols_nona] <- limma::normalizeQuantiles(a_n[, cols_nona], 
+            ties = TRUE)
     }
     
     rownames(a_n) <- rownames(a)
@@ -1509,37 +1520,41 @@ transformAssay <- function(a, method = c("none", "log", "log2", "vsn"),
 #' imputation method using the EM algorithm (\code{MLE}), replacement by 
 #' the smallest non-missing value
 #' in the data (\code{Min}), replacement by the minimal value observed as
-#' the q-th quantile (\code{MinDet}, default \code{q = 0.01}), and replacement by
-#' random draws from a Gaussian distribution centred to a minimal value 
+#' the q-th quantile (\code{MinDet}, default \code{q = 0.01}), and replacement
+#' by random draws from a Gaussian distribution centred to a minimal value 
 #' (\code{MinProb}).
 #'
 #' @details
-#' \code{BPCA} wrapper for \code{pcaMethods::pca} with \code{methods = "bpca"}. \code{BPCA} is a
-#' missing at random (MAR) imputation method. 
+#' \code{BPCA} wrapper for \code{pcaMethods::pca} with \code{methods = "bpca"}. 
+#' \code{BPCA} is a missing at random (MAR) imputation method. 
 #' 
-#' \code{kNN} wrapper for \code{impute::impute.knn} with \code{k = 10}, \code{rowmax = 0.5}, 
-#' \code{colmax = 0.5}, \code{maxp = 1500}. \code{kNN} is a MAR imputation method.
+#' \code{kNN} wrapper for \code{impute::impute.knn} with \code{k = 10}, 
+#' \code{rowmax = 0.5}, \code{colmax = 0.5}, \code{maxp = 1500}. \code{kNN} 
+#' is a MAR imputation method.
 #' 
-#' \code{MLE} wrapper for \code{imputeLCMD::impute.MAR} with \code{method = "MLE"}, 
-#' \code{model.selector = 1}/\code{imputeLCMD::impute.wrapper.MLE}. \code{MLE} is a MAR
-#' imputation method.
+#' \code{MLE} wrapper for \code{imputeLCMD::impute.MAR} with 
+#' \code{method = "MLE"}, 
+#' \code{model.selector = 1}/\code{imputeLCMD::impute.wrapper.MLE}. 
+#' \code{MLE} is a MAR imputation method.
 #' 
-#' \code{Min} imputes the missing values by the observed minimal value of \code{x}. 
-#' \code{Min} is a missing not at random (MNAR) imputation method.
+#' \code{Min} imputes the missing values by the observed minimal value of 
+#' \code{x}. \code{Min} is a missing not at random (MNAR) imputation method.
 #' 
-#' \code{MinDet} is a wrapper for \code{imputeLCMD::impute.MinDet} with \code{q = 0.01}. 
-#' \code{MinDet} performs the imputation using a 
+#' \code{MinDet} is a wrapper for \code{imputeLCMD::impute.MinDet} with 
+#' \code{q = 0.01}. \code{MinDet} performs the imputation using a 
 #' deterministic minimal value approach. The missing entries are
-#' replaced with a minimal value, estimated from the \code{q}-th quantile from each
-#' sample. \code{MinDet} is a MNAR imputation method.
+#' replaced with a minimal value, estimated from the \code{q}-th quantile 
+#' from each sample. \code{MinDet} is a MNAR imputation method.
 #' 
-#' \code{MinProb} is a wrapper for \code{imputeLCMD::impute.MinProb} with \code{q = 0.01} and 
-#' \code{tune.sigma = 1}. \code{MinProb} performs the imputation based on random draws 
-#' from a Gaussion distribution with the mean set to the minimal value of a 
-#' sample. \code{MinProb} is a MNAR imputation method.
+#' \code{MinProb} is a wrapper for \code{imputeLCMD::impute.MinProb} with 
+#' \code{q = 0.01} and \code{tune.sigma = 1}. \code{MinProb} performs the 
+#' imputation based on random draws from a Gaussion distribution with the 
+#' mean set to the minimal value of a sample. \code{MinProb} is a 
+#' MNAR imputation method.
 #' 
 #' @param a \code{matrix} with samples in columns and features in rows
-#' @param method \code{character}, one of \code{"BPCA"}, \code{"kNN"}, \code{"MLE"}, \code{"Min"}, 
+#' @param method \code{character}, one of \code{"BPCA"}, \code{"kNN"}, 
+#' \code{"MLE"}, \code{"Min"}, 
 #' \code{"MinDet"}, or \code{"MinProb"}
 #'
 #' @examples
