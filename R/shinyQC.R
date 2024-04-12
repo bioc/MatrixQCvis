@@ -395,7 +395,7 @@ shinyQC <- function(se, app_server = FALSE) {
         ## input$normalization is either "none", "sum", "quantile division",
         ## "quantile"
         normalizeAssay(a(), method = input$normalization, 
-            probs = input$quantile)
+            probs = input$quantile, multiplyByNormalizationValue = TRUE)
     })
     
     ## reactive expression for data batch correction, returns a matrix with
