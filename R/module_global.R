@@ -654,6 +654,7 @@ selectFeatureSE <- function(se, selection,
 #' 
 #' @param se \code{SummarizedExperiment} object
 #' @param assay \code{matrix} with same dimensions as \code{assay(se)}
+#' @param ... further arguments passed to \code{SummarizedExperiment::assay}
 #' 
 #' @return
 #' \code{SummarizedExperiment} object
@@ -669,9 +670,9 @@ selectFeatureSE <- function(se, selection,
 #' @importFrom shiny req
 #'
 #' @noRd
-updateSE <- function(se, assay) {
+updateSE <- function(se, assay, ...) {
     shiny::req(assay)
-    SummarizedExperiment::assay(se, withDimnames = FALSE) <- assay
+    SummarizedExperiment::assay(se, withDimnames = FALSE, ...) <- assay
     
     return(se)
 }
