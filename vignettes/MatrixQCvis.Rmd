@@ -799,7 +799,7 @@ tbl_mean <- tbl_mean |>
 tbl_info <- tbl |>
     dplyr::select(-protein_expression, -cell_line) |> 
     dplyr::distinct(protein_id, .keep_all = TRUE)
-tbl_mean <- right_join(tbl_info, tbl_mean,
+tbl_mean <- dplyr::right_join(tbl_info, tbl_mean,
     by = c("protein_id" = "protein_id")) 
 
 ## create assay object
