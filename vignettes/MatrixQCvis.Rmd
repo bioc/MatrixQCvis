@@ -806,12 +806,12 @@ tbl_mean <- dplyr::right_join(tbl_info, tbl_mean,
 cols_a_start <- which(colnames(tbl_mean) == "A2058_SKIN")
 a <- tbl_mean[, cols_a_start:ncol(tbl_mean)] |>
     as.matrix()
-rownames(a) <- pull(tbl_mean, "protein_id")
+rownames(a) <- dplyr::pull(tbl_mean, "protein_id")
 
 ## create rowData object
 rD <- tbl_mean[, seq_len(cols_a_start - 1)] |>
     as.data.frame()
-rownames(rD) <- pull(tbl_mean, "protein_id")
+rownames(rD) <- dplyr::pull(tbl_mean, "protein_id")
 
 ## create colData object, for the tissue column split the strings in column 
 ## sample by "_", remove the first element (cell_line) and paste the remaining
