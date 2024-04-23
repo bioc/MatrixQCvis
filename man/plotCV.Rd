@@ -7,8 +7,8 @@
 plotCV(df)
 }
 \arguments{
-\item{df}{\code{data.frame} containing one or multiple columns containing the 
-coefficients of variation}
+\item{df}{\code{data.frame} containing one or multiple columns containing 
+the coefficients of variation}
 }
 \value{
 \code{gg} object from \code{ggplot2}

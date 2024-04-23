@@ -26,7 +26,8 @@ plotted. The violin plots will be ordered according to the order in \code{l}
 }
 \examples{
 x1 <- matrix(seq_len(100), ncol = 10, nrow = 10, 
-    dimnames = list(paste("feature", seq_len(10)), paste("sample", seq_len(10))))
+    dimnames = list(paste("feature", seq_len(10)), 
+        paste("sample", seq_len(10))))
 x2 <- x1 + 5
 x3 <- x2 + 10
 l <- list(x1 = x1, x2 = x2, x3 = x3)

@@ -9,7 +9,8 @@ imputeAssay(a, method = c("BPCA", "kNN", "MLE", "Min", "MinDet", "MinProb"))
 \arguments{
 \item{a}{\code{matrix} with samples in columns and features in rows}
 
-\item{method}{\code{character}, one of \code{"BPCA"}, \code{"kNN"}, \code{"MLE"}, \code{"Min"}, 
+\item{method}{\code{character}, one of \code{"BPCA"}, \code{"kNN"}, 
+\code{"MLE"}, \code{"Min"}, 
 \code{"MinDet"}, or \code{"MinProb"}}
 }
 \value{
@@ -22,34 +23,37 @@ k-nearest neighbor averaging (\code{kNN}), Malimum likelihood-based
 imputation method using the EM algorithm (\code{MLE}), replacement by 
 the smallest non-missing value
 in the data (\code{Min}), replacement by the minimal value observed as
-the q-th quantile (\code{MinDet}, default \code{q = 0.01}), and replacement by
-random draws from a Gaussian distribution centred to a minimal value 
+the q-th quantile (\code{MinDet}, default \code{q = 0.01}), and replacement
+by random draws from a Gaussian distribution centred to a minimal value 
 (\code{MinProb}).
 }
 \details{
-\code{BPCA} wrapper for \code{pcaMethods::pca} with \code{methods = "bpca"}. \code{BPCA} is a
-missing at random (MAR) imputation method. 
+\code{BPCA} wrapper for \code{pcaMethods::pca} with \code{methods = "bpca"}. 
+\code{BPCA} is a missing at random (MAR) imputation method. 
 
-\code{kNN} wrapper for \code{impute::impute.knn} with \code{k = 10}, \code{rowmax = 0.5}, 
-\code{colmax = 0.5}, \code{maxp = 1500}. \code{kNN} is a MAR imputation method.
+\code{kNN} wrapper for \code{impute::impute.knn} with \code{k = 10}, 
+\code{rowmax = 0.5}, \code{colmax = 0.5}, \code{maxp = 1500}. \code{kNN} 
+is a MAR imputation method.
 
-\code{MLE} wrapper for \code{imputeLCMD::impute.MAR} with \code{method = "MLE"}, 
-\code{model.selector = 1}/\code{imputeLCMD::impute.wrapper.MLE}. \code{MLE} is a MAR
-imputation method.
+\code{MLE} wrapper for \code{imputeLCMD::impute.MAR} with 
+\code{method = "MLE"}, 
+\code{model.selector = 1}/\code{imputeLCMD::impute.wrapper.MLE}. 
+\code{MLE} is a MAR imputation method.
 
-\code{Min} imputes the missing values by the observed minimal value of \code{x}. 
-\code{Min} is a missing not at random (MNAR) imputation method.
+\code{Min} imputes the missing values by the observed minimal value of 
+\code{x}. \code{Min} is a missing not at random (MNAR) imputation method.
 
-\code{MinDet} is a wrapper for \code{imputeLCMD::impute.MinDet} with \code{q = 0.01}. 
-\code{MinDet} performs the imputation using a 
+\code{MinDet} is a wrapper for \code{imputeLCMD::impute.MinDet} with 
+\code{q = 0.01}. \code{MinDet} performs the imputation using a 
 deterministic minimal value approach. The missing entries are
-replaced with a minimal value, estimated from the \code{q}-th quantile from each
-sample. \code{MinDet} is a MNAR imputation method.
+replaced with a minimal value, estimated from the \code{q}-th quantile 
+from each sample. \code{MinDet} is a MNAR imputation method.
 
-\code{MinProb} is a wrapper for \code{imputeLCMD::impute.MinProb} with \code{q = 0.01} and 
-\code{tune.sigma = 1}. \code{MinProb} performs the imputation based on random draws 
-from a Gaussion distribution with the mean set to the minimal value of a 
-sample. \code{MinProb} is a MNAR imputation method.
+\code{MinProb} is a wrapper for \code{imputeLCMD::impute.MinProb} with 
+\code{q = 0.01} and \code{tune.sigma = 1}. \code{MinProb} performs the 
+imputation based on random draws from a Gaussion distribution with the 
+mean set to the minimal value of a sample. \code{MinProb} is a 
+MNAR imputation method.
 }
 \examples{
 a <- matrix(seq_len(100), nrow = 10, ncol = 10, 

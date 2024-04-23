@@ -33,12 +33,12 @@ of \code{colData(se)} (\code{"category"})}
 \code{gg} object from \code{ggplot2}
 }
 \description{
-The function \code{driftPlot} aggregates the (count/intensity) values from the 
-\code{assay()} slot of a \code{SummarizedExperiment} by the \code{median} or 
-\code{sum} of the (count/intensity) values. \code{driftPlot} then visualizes 
-these aggregated values and adds a trend line (using either LOESS or a 
-linear model) from (a subset of) the aggregated values. The subset is 
-specified by the arguments \code{category} and \code{level}.
+The function \code{driftPlot} aggregates the (count/intensity) values from 
+the \code{assay()} slot of a \code{SummarizedExperiment} by the \code{median} 
+or \code{sum} of the (count/intensity) values. \code{driftPlot} then 
+visualizes these aggregated values and adds a trend line (using either 
+LOESS or a linear model) from (a subset of) the aggregated values. The 
+subset is specified by the arguments \code{category} and \code{level}.
 }
 \details{
 The x-values are sorted according to the \code{orderCategory} argument: The 

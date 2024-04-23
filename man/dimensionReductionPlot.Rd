@@ -64,13 +64,14 @@ a <- matrix(seq_len(100), nrow = 10, ncol = 10, byrow = TRUE,
             dimnames = list(seq_len(10), paste("sample", seq_len(10))))
 set.seed(1)
 a <- a + rnorm(100)
-cD <- data.frame(name = colnames(a), type = c(rep("1", 5), rep("2", 5)))
+cD <- data.frame(name = colnames(a), type = c(rep("1", 5), rep("2", 5)),
+  median_vals = apply(a, 2, median))
 rD <- data.frame(spectra = rownames(a))
 se <- SummarizedExperiment(assay = a, rowData = rD, colData = cD)
 
 pca <- dimensionReduction(x = assay(se), type = "PCA", params = list())[[1]]
 
-dimensionReductionPlot(tbl = pca, se = se, color = "type", size = "none",
+dimensionReductionPlot(tbl = pca, se = se, color = "type", size = "median_vals",
     x_coord = "PC1", y_coord = "PC2")
 
 }

@@ -15,8 +15,8 @@ cv(x, name = "raw")
 \code{list}
 }
 \description{
-The function \code{cv} calculates the coefficient of variation from columns of 
-a matrix. The coefficients of variation are calculated according to the 
+The function \code{cv} calculates the coefficient of variation from columns  
+of a matrix. The coefficients of variation are calculated according to the 
 formula \code{sd(y) / mean(y) * 100} with \code{y} the column values, thus,
 the function returns the coefficient of variation in percentage.
 }

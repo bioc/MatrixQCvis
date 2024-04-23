@@ -17,8 +17,8 @@ features in rows}
 }
 \description{
 The function \code{distShiny} takes as an input a numerical \code{matrix} or
-\code{data.frame} and returns the distances between the rows and columns based
-on the defined \code{method} (e.g. euclidean distance).
+\code{data.frame} and returns the distances between the rows and columns
+based on the defined \code{method} (e.g. euclidean distance).
 }
 \details{
 Internal use in \code{shinyQC}.
