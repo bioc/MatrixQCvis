@@ -1,3 +1,7 @@
+Changes in version 1.11.6 (2024-04-23)
++ add parameter ... to function updateSE that will be passed
+  to SummarizedExperiment::assay within updateSE 
+
 Changes in version 1.11.5 (2024-04-12)
 + set parameter multiplyByNormalizationValue in normalizeAssay
   To TRUE in shinyQC
