@@ -1,3 +1,6 @@
+Changes in version 1.11.7 (2024-04-25)
++ add dplyr:: in front of pull function in vignette to avoid errors
+
 Changes in version 1.11.6 (2024-04-23)
 + add parameter ... to function updateSE that will be passed
   to SummarizedExperiment::assay within updateSE 
