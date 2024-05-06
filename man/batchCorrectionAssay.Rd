@@ -8,7 +8,9 @@
 batchCorrectionAssay(
   se,
   method = c("none", "removeBatchEffect (limma)"),
-  batchColumn = colnames(se@colData)
+  batch = NULL,
+  batch2 = NULL,
+  ...
 )
 }
 \arguments{
@@ -17,7 +19,13 @@ batchCorrectionAssay(
 \item{method}{\code{character}, one of \code{"none"} or 
 \code{"removeBatchEffect"}}
 
-\item{batchColumn}{\code{character}, one of \code{colnames(colData(se))}}
+\item{batch}{\code{character}, \code{NULL} or one of 
+\code{colnames(colData(se))}}
+
+\item{batch2}{\code{character}, \code{NULL} or one of
+\code{colnames(colData(se))}}
+
+\item{...}{further arguments passed to \code{removeBatchEffect}}
 }
 \value{
 \code{matrix}
@@ -40,7 +48,7 @@ name of the first column in \code{colData(se)} if
 \examples{
 ## create se
 a <- matrix(seq_len(100), nrow = 10, ncol = 10, 
-            dimnames = list(seq_len(10), paste("sample", seq_len(10))))
+    dimnames = list(seq_len(10), paste("sample", seq_len(10))))
 a[c(1, 5, 8), seq_len(5)] <- NA
 set.seed(1)
 a <- a + rnorm(100)
@@ -51,6 +59,6 @@ se <- SummarizedExperiment::SummarizedExperiment(assay = a,
     rowData = rD, colData = cD)
 
 batchCorrectionAssay(se, method = "removeBatchEffect (limma)", 
-                            batchColumn = "batch")
+    batch = "batch", batch2 = NULL)
 
 }

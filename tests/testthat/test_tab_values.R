@@ -377,13 +377,23 @@ test_that("batchCorrectionAssay", {
     SummarizedExperiment::assay(se_b) <- a
     a_n <- batchCorrectionAssay(se_b, method = "none")
     a_l <- batchCorrectionAssay(se_b, method = "removeBatchEffect (limma)",
-        batchColumn = "type")
+        batch = "type", batch2 = NULL)
 
     expect_error(batchCorrectionAssay(a, "removeBatchEffect (limma)"),
         "unable to find an inherited method for function")
     expect_error(batchCorrectionAssay(se_b, "foo"), "'arg' should be one of ")
-    expect_error(batchCorrectionAssay(se_b, "removeBatchEffect (limma)", "foo"),
-        "batchColumn not in")
+    expect_error(batchCorrectionAssay(se_b, "removeBatchEffect (limma)", 
+        batch = "foo", batch2 = NULL),
+        "should be one of")
+    expect_error(batchCorrectionAssay(se_b, "removeBatchEffect (limma)", 
+        batch = "type", batch2 = "foo"),
+        "should be one of")
+    expect_error(batchCorrectionAssay(se_b, "removeBatchEffect (limma)", 
+        batch = "foo", batch2 = "foo"),
+        "should be one of")
+    expect_error(batchCorrectionAssay(se_b, "removeBatchEffect (limma)", 
+        batch = NULL, batch2 = "foo"),
+        "should be one of")
     expect_equal(a_n, a)
     expect_true(is.matrix(a_n))
     expect_true(is.matrix(a_l))

@@ -1387,12 +1387,16 @@ normalizeAssay <- function(a,
 #' @param se \code{SummarizedExperiment}
 #' @param method \code{character}, one of \code{"none"} or 
 #' \code{"removeBatchEffect"}
-#' @param batchColumn \code{character}, one of \code{colnames(colData(se))}
+#' @param batch \code{character}, \code{NULL} or one of 
+#' \code{colnames(colData(se))}
+#' @param batch2 \code{character}, \code{NULL} or one of
+#' \code{colnames(colData(se))}
+#' @param ... further arguments passed to \code{removeBatchEffect} 
 #'
 #' @examples
 #' ## create se
 #' a <- matrix(seq_len(100), nrow = 10, ncol = 10, 
-#'             dimnames = list(seq_len(10), paste("sample", seq_len(10))))
+#'     dimnames = list(seq_len(10), paste("sample", seq_len(10))))
 #' a[c(1, 5, 8), seq_len(5)] <- NA
 #' set.seed(1)
 #' a <- a + rnorm(100)
@@ -1403,7 +1407,7 @@ normalizeAssay <- function(a,
 #'     rowData = rD, colData = cD)
 #' 
 #' batchCorrectionAssay(se, method = "removeBatchEffect (limma)", 
-#'                             batchColumn = "batch")
+#'     batch = "batch", batch2 = NULL)
 #' 
 #' @return \code{matrix}
 #' 
@@ -1413,25 +1417,33 @@ normalizeAssay <- function(a,
 #' @export
 batchCorrectionAssay <- function(se, 
         method = c("none", "removeBatchEffect (limma)"), 
-        batchColumn = colnames(se@colData)) {
+        batch = NULL, batch2 = NULL, ...) {
     
     method <- match.arg(method)
+    ##batch <- match.arg(batch)
+    ##batch2 <- match.arg(batch2)
     a <- SummarizedExperiment::assay(se)
     a_b <- as.matrix(a)
     
     if (method == "removeBatchEffect (limma)") {
         
         cD <- se@colData
-        if (is.null(batchColumn)) {
-            batchColumn <- colnames(cD)[1]
+        
+        ## check, when batch and batch2 are not NULL, that they match
+        ## with the colnames of colData, assign the values of colData
+        if (!is.null(batch)) {
+            batch <- match.arg(batch, choices = colnames(cD))
+            batch <- cD[[batch]]
         }
         
-        if (!batchColumn %in% colnames(cD)) {
-            stop("batchColumn not in colnames(colData(se))")
+        if (!is.null(batch2)) {
+            batch2 <- match.arg(batch2, choices = colnames(cD))
+            batch2 <- cD[[batch2]]
         }
-        
-        batch <- cD[[batchColumn]]
-        a_b <- limma::removeBatchEffect(a_b, batch = batch)
+
+        ## perform batch correction
+        a_b <- limma::removeBatchEffect(a_b, batch = batch, batch2 = batch2, 
+            ...)
     }
     
     rownames(a_b) <- rownames(a)
