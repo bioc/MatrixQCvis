@@ -1,3 +1,6 @@
+Changes in version 1.13.1 (2024-04-25)
++ add batch2 and ... arguments in batchCorrectionAssay
+
 Changes in version 1.11.7 (2024-04-25)
 + add dplyr:: in front of pull function in vignette to avoid errors
 
