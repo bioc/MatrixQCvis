@@ -23,9 +23,9 @@
 #' @examples
 #' tP_colDataUI("test")
 #' 
-#' @importFrom shiny NS tabPanel fluidRow column uiOutput dataTableOutput br
+#' @importFrom shiny NS tabPanel fluidRow column uiOutput br
 #' @importFrom shinyhelper helper
-#' 
+#' @importFrom DT DTOutput
 #' @noRd
 tP_colDataUI <- function(id) {
     
@@ -36,7 +36,7 @@ tP_colDataUI <- function(id) {
                 shiny::br() |> 
                     shinyhelper::helper(content = "tabPanel_DE")),
             shiny::column(width = 12, 
-                shiny::dataTableOutput(outputId = ns("colDt")) 
+                DT::DTOutput(outputId = ns("colDt")) 
             )  
         )
     )
@@ -61,7 +61,8 @@ tP_colDataUI <- function(id) {
 #'
 #' @author Thomas Naake
 #' 
-#' @importFrom shiny moduleServer renderDataTable
+#' @importFrom shiny moduleServer
+#' @importFrom DT renderDT
 #' 
 #' @noRd
 colDataServer <- function(id, se) {
@@ -69,7 +70,7 @@ colDataServer <- function(id, se) {
         id, 
         function(input, output, session) {
             
-            output$colDt <- shiny::renderDataTable({se()@colData}, 
+            output$colDt <- DT::renderDT({as.data.frame(se()@colData)}, 
                 options = list(pageLength = 20))
         }
     )
@@ -102,6 +103,8 @@ colDataServer <- function(id, se) {
 #' 
 #' @importFrom shiny NS tabPanel fluidRow column uiOutput br
 #' @importFrom shinyhelper helper
+#' @importFrom DT DTOutput
+#' 
 #' @noRd
 tP_modelMatrixUI <- function(id) {
     
@@ -113,7 +116,7 @@ tP_modelMatrixUI <- function(id) {
                     shinyhelper::helper(content = "tabPanel_DE")),
             shiny::column(width = 12, 
                 shiny::verbatimTextOutput(outputId = ns("textModelMatrix")),
-                shiny::dataTableOutput(outputId = ns("modelMatrixDataTable")) 
+                DT::DTOutput(outputId = ns("modelMatrixDataTable")) 
             )  
         )
     )
@@ -275,8 +278,9 @@ modelMatrixServer <- function(id, se, validFormulaMM) {
 #'
 #' @author Thomas Naake
 #' 
-#' @importFrom shiny moduleServer renderUI renderDataTable renderText br
-#' @importFrom shiny dataTableOutput verbatimTextOutput
+#' @importFrom shiny moduleServer renderUI renderText br
+#' @importFrom shiny verbatimTextOutput
+#' @importFrom DT renderDT DTOutput
 #' 
 #' @noRd
 modelMatrixUIServer <- function(id, modelMatrix, validFormulaMM) {
@@ -294,15 +298,14 @@ modelMatrixUIServer <- function(id, modelMatrix, validFormulaMM) {
                 
                 msg
             })
-            
-            
-            
-            output$modelMatrixDataTable <- shiny::renderDataTable({
+
+            output$modelMatrixDataTable <- DT::renderDT({
                 
                 ## if there is a valid formula return the DataTable
                 if (!is.null(validFormulaMM())) {
                     
-                        mM <- modelMatrix() |> as.matrix()
+                        mM <- modelMatrix() |> 
+                            as.matrix()
                         cbind(rownames(mM), mM)
                 }
                 
@@ -338,6 +341,8 @@ modelMatrixUIServer <- function(id, modelMatrix, validFormulaMM) {
 #' 
 #' @importFrom shiny NS tabPanel fluidRow column uiOutput br
 #' @importFrom shinyhelper helper
+#' @importFrom DT DTOutput
+#'
 #' @noRd
 tP_contrastUI <- function(id) {
     
@@ -349,7 +354,7 @@ tP_contrastUI <- function(id) {
                     shinyhelper::helper(content = "tabPanel_DE")),
             shiny::column(width = 12, 
                 shiny::verbatimTextOutput(outputId = ns("textContrastMatrix")),
-                shiny::dataTableOutput(ns("contrastMatrix")) 
+                DT::DTOutput(ns("contrastMatrix")) 
             )
         ) 
     )
@@ -472,70 +477,71 @@ contrastMatrixServer <- function(id, validExprContrast, modelMatrix) {
         function(input, output, session) {
             contrastMatrix <- shiny::reactive({
                 if (!is.null(validExprContrast())) {
-                    limma::makeContrasts(contrasts = validExprContrast(), 
+                    limma::makeContrasts(contrasts = validExprContrast(),
                         levels = modelMatrix())
                 }
             })
-            
+
             return(contrastMatrix)
         }
     )
 }
 
 #' @name contrastMatrixUIServer
-#' 
+#'
 #' @title Module for server expressions of tab panel 'Contrast matrix'
-#' 
+#'
 #' @description
-#' The module defines the server expressions in the tab panel 
+#' The module defines the server expressions in the tab panel
 #' 'Contrast matrix'.
-#' 
+#'
 #' @details
 #' Internal function for \code{shinyQC}.
-#' 
+#'
 #' @param id \code{character}
 #' @param validFormulaMM \code{formula} and \code{reactive} value
 #' @param validExprContrast \code{character} and \code{reactive} value
 #' @param contrastMatrix \code{matrix} and \code{reactive} value
-#' 
-#' @return 
+#'
+#' @return
 #' \code{shiny.render.function} expression
 #'
 #' @author Thomas Naake
-#' 
-#' @importFrom shiny moduleServer renderUI renderDataTable dataTableOutput
+#'
+#' @importFrom shiny moduleServer renderUI
 #' @importFrom shiny  renderText verbatimTextOutput
-#' 
+#' @importFrom DT renderDT DTOutput
+#'
 #' @noRd
-contrastMatrixUIServer <- function(id, validFormulaMM, validExprContrast, 
+contrastMatrixUIServer <- function(id, validFormulaMM, validExprContrast,
         contrastMatrix) {
     shiny::moduleServer(
         id,
         function(input, output, session) {
 
             output$textContrastMatrix <- shiny::renderText({
-                
+
                 msg <- NULL
-                
+
                 if (is.null(validFormulaMM()))
                     msg <- c("formula for model matrix not valid with the",
                              "given colData")
-                
+
                 if (!is.null(validFormulaMM()) & is.null(validExprContrast()))
                     msg <- c("contrast expression not valid with",
                              "the given model matrix")
-                
+
                 return(msg)
             })
-            
-            output$contrastMatrix <- shiny::renderDataTable({
-            
+
+            output$contrastMatrix <- DT::renderDT({
+
                 cM <- NULL
                 ## if there are valid formulas return the contrast matrix
                 if (!is.null(validFormulaMM()) & !is.null(validExprContrast())) {
                     cM <- contrastMatrix()
                     cM <- cbind(rownames(cM), cM)
-    
+
                 }
                 cM
             }, options = list(pageLength = 20))
@@ -548,57 +554,58 @@ contrastMatrixUIServer <- function(id, validFormulaMM, validExprContrast,
 ################################### Top DE #####################################
 ################################################################################
 #' @name tP_topDEUI
-#' 
+#'
 #' @title Tab panel UI for tab panel 'Top DE'
-#' 
+#'
 #' @description
 #' The module defines the UI in the tab panel 'Top DE'.
-#' 
+#'
 #' @details 
-#' \code{tP_topDEUI} returns the HTML code for the tab-pane 'Top DE'. 
+#' \code{tP_topDEUI} returns the HTML code for the tab-pane 'Top DE'.
 #' Internal function for \code{shinyQC}.
-#' 
+#'
 #' @param id \code{character}
-#' 
+#'
 #' @return 
 #' \code{shiny.tag} with HTML content
-#' 
+#'
 #' @author Thomas Naake
-#' 
+#'
 #' @examples
 #' tP_topDEUI("test")
-#' 
+#'
 #' @importFrom shiny NS tabPanel fluidRow column uiOutput br
 #' @importFrom shinyhelper helper
-#' 
+#' @importFrom DT DTOutput
+#'
 #' @noRd
 tP_topDEUI <- function(id) {
-    
+
     ns <- shiny::NS(id)
-    shiny::tabPanel(title = "Top DE", 
+    shiny::tabPanel(title = "Top DE",
         shiny::fluidRow(width = 12,
-            shiny::column(12, 
-                shiny::br()  |> 
+            shiny::column(12,
+                shiny::br() |>
                     shinyhelper::helper(content = "tabPanel_DE")),
             shiny::column(width = 12, 
                 shiny::verbatimTextOutput(outputId = ns("textDataTable")),
-                shiny::dataTableOutput(outputId = ns("dataTable")) 
+                DT::DTOutput(outputId = ns("dataTable"))
             )  
         )
     )
 }
 
 #' @name topDEUIServer
-#' 
+#'
 #' @title Module for server expressions of tab panel 'Top DE'
-#' 
+#'
 #' @description
-#' The module defines the server expressions in the tab panel 
+#' The module defines the server expressions in the tab panel
 #' 'Top DE'.
-#' 
+#'
 #' @details
 #' Internal function for \code{shinyQC}.
-#' 
+#'
 #' @param id \code{character}
 #' @param type \code{reactive} value
 #' @param validFormulaMM \code{formula} and \code{reactive} value
@@ -609,36 +616,37 @@ tP_topDEUI <- function(id) {
 #' \code{shiny.render.function} expression
 #'
 #' @author Thomas Naake
-#' 
-#' @importFrom shiny moduleServer renderUI renderDataTable dataTableOutput br
+#'
+#' @importFrom shiny moduleServer renderUI br
 #' @importFrom shiny renderText verbatimTextOutput
+#' @importFrom DT renderDT DTOutput
 #' @importFrom ggplot2 ggsave
 #' @importFrom SummarizedExperiment colData
-#' 
+#'
 #' @noRd
-topDEUIServer <- function(id, type, validFormulaMM, validExprContrast, 
+topDEUIServer <- function(id, type, validFormulaMM, validExprContrast,
         testResult) {
-    
+
     shiny::moduleServer(
         id,
         function(input, output, session) {
-            
+
             output$textDataTable <- shiny::renderText({
-                
+
                 msg <- NULL
-                
+
                 if (is.null(validFormulaMM()))
                     msg <- c("formula for model matrix not valid with the",
                       "given colData")
-                
+
                 if (!is.null(validFormulaMM()) & is.null(validExprContrast()))
                     msg <- c("contrast expression not valid with",
                         "the given model matrix")
-                
+
                 msg
             })
-    
-            output$dataTable <- shiny::renderDataTable({
+
+            output$dataTable <- DT::renderDT({
                 dataTable <- NULL
                 if (!is.null(validFormulaMM())) {
                     dataTable <- testResult()
@@ -651,44 +659,44 @@ topDEUIServer <- function(id, type, validFormulaMM, validExprContrast,
 
 
 #' @name fitServer
-#' 
+#'
 #' @title Module for server expressions of tab panel 'Top DE'
-#' 
+#'
 #' @description
-#' The module defines the server expressions in the tab panel 
+#' The module defines the server expressions in the tab panel
 #' 'Top DE'.
-#' 
+#'
 #' @details
 #' Internal function for \code{shinyQC}. For \code{eBayes}, the \code{trend}
-#' argument is set by default to \code{TRUE}. The \code{trend=TRUE} argument 
-#' will model any mean-variance trend in the data; this is required when 
-#' there is a mean-variance trend (otherwise the estimates of the prior d.f. and 
-#' subsequent eBayes shrinkage would be confounded by systematic 
+#' argument is set by default to \code{TRUE}. The \code{trend=TRUE} argument
+#' will model any mean-variance trend in the data; this is required when
+#' there is a mean-variance trend (otherwise the estimates of the prior d.f. and
+#' subsequent eBayes shrinkage would be confounded by systematic
 #' mean-dependent differences from a common prior variance).
-#' 
+#'
 #' @param id \code{character}
-#' @param assay \code{matrix} and \code{reactive} value, obtained from 
+#' @param assay \code{matrix} and \code{reactive} value, obtained from
 #' \code{assay(SummarizedExperiment)}
 #' @param modelMatrix \code{matrix} and \code{reactive} value
 #' @param contrastMatrix \code{matrix} and \code{reactive} value
-#' 
+#'
 #' @return 
 #' \code{reactive} expression
 #'
 #' @author Thomas Naake
-#' 
+#'
 #' @importFrom shiny moduleServer reactive
 #' @importFrom limma lmFit contrasts.fit eBayes
 #' @importFrom proDA proDA
-#' 
+#'
 #' @noRd
 fitServer <- function(id, assay, modelMatrix, contrastMatrix) {
     shiny::moduleServer(
         id,
         function(input, output, session) {
-            
+
             fit <- shiny::reactive({
-                    
+
                 if (id == "ttest") {
                     fit <- limma::lmFit(assay(), design = modelMatrix())
                     if (!is.null(contrastMatrix())) 
@@ -696,9 +704,9 @@ fitServer <- function(id, assay, modelMatrix, contrastMatrix) {
                     fit <- limma::eBayes(fit, trend = TRUE, robust = TRUE)
                 }
                 if (id == "proDA") {
-                    fit <- proDA::proDA(assay(), design = modelMatrix()) 
+                    fit <- proDA::proDA(assay(), design = modelMatrix())
                 }
-    
+
                 fit
             })
         }
@@ -706,16 +714,16 @@ fitServer <- function(id, assay, modelMatrix, contrastMatrix) {
 }
 
 #' @name testResultsServer
-#' 
+#'
 #' @title Module for server expressions of tab panel 'Top DE'
-#' 
+#'
 #' @description
-#' The module defines the server expressions in the tab panel 
+#' The module defines the server expressions in the tab panel
 #' 'Top DE'.
-#' 
+#'
 #' @details
-#' Internal function for \code{shinyQC}. 
-#' 
+#' Internal function for \code{shinyQC}.
+#'
 #' @param id \code{character}
 #' @param type \code{reactive} value
 #' @param fit_ttest \code{matrix} and \code{reactive} value
@@ -733,22 +741,22 @@ fitServer <- function(id, assay, modelMatrix, contrastMatrix) {
 #' @importFrom proDA test_diff
 #' 
 #' @noRd
-testResultServer <- function(id, type, fit_ttest, fit_proDA, validFormulaMM, 
+testResultServer <- function(id, type, fit_ttest, fit_proDA, validFormulaMM,
         validExprContrast) {
     shiny::moduleServer(
         id,
         function(input, output, session) {
             testResult <- shiny::reactive({
-                
+
                 if (!is.null(validFormulaMM())) {
                     if (type() == "ttest") {
-                        t <- limma::topTable(fit_ttest(), number = Inf, 
+                        t <- limma::topTable(fit_ttest(), number = Inf,
                                 adjust.method = "fdr", p.value = 0.05)
                         t <- cbind(name = rownames(t), t)
                     }
                     if (type() == "proDA") {
-                        t <- proDA::test_diff(fit = fit_proDA(), 
-                            contrast = validExprContrast(), 
+                        t <- proDA::test_diff(fit = fit_proDA(),
+                            contrast = validExprContrast(),
                             sort_by = "adj_pval")
                     }
                     return(t)
@@ -764,37 +772,37 @@ testResultServer <- function(id, type, fit_ttest, fit_proDA, validFormulaMM,
 ################################################################################
 
 #' @name tP_volcanoUI
-#' 
+#'
 #' @title Tab panel UI for tab panel 'Volcano plot'
-#' 
+#'
 #' @description
 #' The module defines the UI in the tab panel 'Volcano plot'.
-#' 
+#'
 #' @details 
-#' \code{tP_volcanoUI} returns the HTML code for the tab-pane 'Volcano plot'. 
+#' \code{tP_volcanoUI} returns the HTML code for the tab-pane 'Volcano plot'.
 #' Internal function for \code{shinyQC}.
-#' 
+#'
 #' @param id \code{character}
-#' 
+#'
 #' @return 
 #' \code{shiny.tag} with HTML content
-#' 
+#'
 #' @author Thomas Naake
-#' 
+#'
 #' @examples
 #' tP_volcanoUI("test")
 #'
 #' @importFrom shiny NS tabPanel fluidRow column uiOutput br
 #' @importFrom shinyhelper helper
-#' 
+#'
 #' @noRd
 tP_volcanoUI <- function(id) {
-    
+
     ns <- shiny::NS(id)
-    shiny::tabPanel(title = "Volcano plot", 
+    shiny::tabPanel(title = "Volcano plot",
         shiny::fluidRow(width = 12,
-            shiny::column(12, 
-                shiny::br() |> 
+            shiny::column(12,
+                shiny::br() |>
                     shinyhelper::helper(content = "tabPanel_DE")),
             shiny::column(width = 12,
                 shiny::verbatimTextOutput(outputId = ns("textVolcano")),
@@ -809,11 +817,11 @@ tP_volcanoUI <- function(id) {
 #' @title Module for server expressions of tab panel 'Volcano plot'
 #' 
 #' @description
-#' The module defines the server expressions in the tab panel 
+#' The module defines the server expressions in the tab panel
 #' 'Volcano plot'.
 #' 
 #' @details
-#' Internal function for \code{shinyQC}. 
+#' Internal function for \code{shinyQC}.
 #' 
 #' @param id \code{character}
 #' @param type \code{reactive} value
@@ -821,30 +829,30 @@ tP_volcanoUI <- function(id) {
 #' @param validExprContrast \code{character} and \code{reactive} value
 #' @param testResult \code{matrix} and \code{reactive} value
 #' 
-#' @return 
+#' @return
 #' \code{shiny.render.function} expression
 #'
 #' @author Thomas Naake
-#' 
+#'
 #' @importFrom shiny moduleServer renderUI reactive downloadHandler renderText
 #' @importFrom shiny verbatimTextOutput br tagList
 #' @importFrom plotly renderPlotly
 #' @importFrom shinyhelper helper
 #' @importFrom htmlwidgets saveWidget
-#' 
+#'
 #' @noRd
-volcanoUIServer <- function(id, type, validFormulaMM, validExprContrast, 
+volcanoUIServer <- function(id, type, validFormulaMM, validExprContrast,
         testResult) {
 
     shiny::moduleServer(
-        id, 
+        id,
         function(input, output, session) {
-            
-            
+
+
             output$textVolcano <- shiny::renderText({
                 
                 msg <- NULL
-                
+
                 if (is.null(validFormulaMM())) {
                     msg <- c("formula for model matrix not valid with the",
                              "given colData")
@@ -854,26 +862,23 @@ volcanoUIServer <- function(id, type, validFormulaMM, validExprContrast,
                     msg <- c("contrast expression not valid with",
                              "the given model matrix")
                 }
-                
+
                 return(msg)
             })
-            
-            
-            
-        
+
             output$volcano <- shiny::renderUI({
                 ns <- session$ns
-                if (!is.null(validFormulaMM()) & 
+                if (!is.null(validFormulaMM()) &
                     !is.null(validExprContrast())) {
-                    
+
                     p_volcano <- shiny::reactive({
                         volcanoPlot(testResult(), type())
                     })
-                        
+
                     output$plotVolcano <- plotly::renderPlotly({
                         p_volcano()
                     })
-                        
+
                     output$downloadPlot <- shiny::downloadHandler(
                         filename = function() {
                             paste("Volcano_", type(), ".html")
@@ -882,7 +887,7 @@ volcanoUIServer <- function(id, type, validFormulaMM, validExprContrast,
                             htmlwidgets::saveWidget(p_volcano(), file)
                         }
                     )
-                        
+
                     ## return plot and downloadButton
                     shiny::tagList(
                         plotly::plotlyOutput(ns("plotVolcano")),
@@ -899,14 +904,14 @@ volcanoUIServer <- function(id, type, validFormulaMM, validExprContrast,
 #' 
 #' @title Tab panel UI for tab panel 'DE'
 #' 
-#' @description 
+#' @description
 #' The module defines the UI for the tab panel 'DE'.
 #' 
 #' @details 
-#' \code{tP_DE_all} returns the HTML code for the tab-pane 
+#' \code{tP_DE_all} returns the HTML code for the tab-panel
 #' 'DE'. Internal function for \code{shinyQC}.
 #' 
-#' @return 
+#' @return
 #' \code{shiny.tag} with HTML content
 #'
 #' @author Thomas Naake
@@ -914,7 +919,7 @@ volcanoUIServer <- function(id, type, validFormulaMM, validExprContrast,
 #' @examples
 #' tP_DE_all()
 #' 
-#' @importFrom shiny tabPanel 
+#' @importFrom shiny tabPanel
 #' @importFrom shinydashboard tabBox
 #' 
 #' @noRd
