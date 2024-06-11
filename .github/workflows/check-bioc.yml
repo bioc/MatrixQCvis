@@ -202,13 +202,13 @@ jobs:
           remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE, force = TRUE)
         shell: Rscript {0}
 
-      - name: Install dependencies pass 2 (macOS-latest)
+      - name: Install dependencies pass 2 (macOS-latest-specific)
         if: matrix.config.os == 'macOS-latest'
         run: |
-	  BiocManager::install(c("dplyr", "ExperimentHub", "ggplot2", "Hmisc", "plotly", "tibble", "tidyr", "UpSetR", "vsn"))
+          BiocManager::install(c("dplyr", "ExperimentHub", "ggplot2", "Hmisc", "plotly", "tibble", "tidyr", "UpSetR", "vsn"))
         shell: Rscript {0}
       
-      - name: Install dependencies pass 2 (windows-latest)
+      - name: Install dependencies pass 2 (windows-latest-specific)
         if: matrix.config.os == 'windows-latest'
         run: |
 	  BiocManager::install(c("BiocCheck"))
