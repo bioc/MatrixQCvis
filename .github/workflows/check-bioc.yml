@@ -206,11 +206,13 @@ jobs:
         if: matrix.config.os == 'macOS-latest'
         run: |
 	  BiocManager::install(c("dplyr", "ExperimentHub", "ggplot2", "Hmisc", "plotly", "tibble", "tidyr", "UpSetR", "vsn"))
+        shell: Rscript {0}
       
       - name: Install dependencies pass 2 (windows-latest)
         if: matrix.config.os == 'windows-latest'
         run: |
 	  BiocManager::install(c("BiocCheck"))
+        shell: Rscript {0}
 
       - name: Install BiocGenerics
         if:  env.has_RUnit == 'true'
