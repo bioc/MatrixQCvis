@@ -1,8 +1,8 @@
 Package: MatrixQCvis
 Type: Package
 Title: Shiny-based interactive data-quality exploration for omics data
-Version: 1.13.1
-Date: 2024-05-06
+Version: 1.13.2
+Date: 2024-06-11
 Authors@R: c(person("Thomas", "Naake", role = c("aut", "cre"), 
 		email = "thomasnaake@googlemail.com",
 		comment = c(ORCID = "0000-0001-7917-5580")),
@@ -31,6 +31,7 @@ Description:
 	data, but also allows to assess the data quality of other data types that 
 	can be represented in a SummarizedExperiment object.
 Depends:
+	DT (>= 0.33),
 	SummarizedExperiment (>= 1.20.0),
 	plotly (>= 4.9.3),
 	shiny (>= 1.6.0)
