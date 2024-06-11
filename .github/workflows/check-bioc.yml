@@ -172,6 +172,9 @@ jobs:
           ## https://github.com/r-lib/remotes/issues/296
           ## Ideally, all dependencies should get installed in the first pass.
 
+          ## install vectors
+          install.packages("vctrs")
+
           ## Set the repos source depending on the OS
           ## Alternatively use https://storage.googleapis.com/bioconductor_docker/packages/
           ## though based on https://bit.ly/bioc2021-package-binaries
@@ -194,12 +197,6 @@ jobs:
           message(paste('****', Sys.time(), 'pass number 1 at installing dependencies: local dependencies ****'))
           remotes::install_local(dependencies = TRUE, repos = gha_repos, build_vignettes = FALSE, upgrade = TRUE)
         continue-on-error: true
-        shell: Rscript {0}
-
-      - name: Install dependencies pass 2 (macOS-latest-specific)
-        if: matrix.config.os == 'macOS-latest'
-        run: |
-          ##BiocManager::install(c("dplyr", "ExperimentHub", "ggplot2", "Hmisc", "plotly", "tibble", "tidyr", "UpSetR", "vsn"))
         shell: Rscript {0}
       
       - name: Install dependencies pass 2 (windows-latest-specific)
