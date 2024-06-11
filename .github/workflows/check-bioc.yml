@@ -211,7 +211,7 @@ jobs:
       - name: Install dependencies pass 2 (windows-latest-specific)
         if: matrix.config.os == 'windows-latest'
         run: |
-	  BiocManager::install(c("BiocCheck"))
+          BiocManager::install(c("BiocCheck"))
         shell: Rscript {0}
 
       - name: Install BiocGenerics
