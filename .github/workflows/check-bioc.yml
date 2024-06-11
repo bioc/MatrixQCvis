@@ -202,6 +202,11 @@ jobs:
           remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE, force = TRUE)
         shell: Rscript {0}
 
+      - name: Install dependencies pass 2 (macOS)
+        if: matrix.config.os == 'macOS-latest'
+        run: |
+	  BiocManager::install(c("dplyr", "ExperimentHub", "ggplot2", "Hmisc", "plotly", "tibble", "tidyr", "UpSetR", "vsn"))
+
       - name: Install BiocGenerics
         if:  env.has_RUnit == 'true'
         run: |
