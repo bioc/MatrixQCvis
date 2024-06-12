@@ -173,7 +173,7 @@ jobs:
           ## Ideally, all dependencies should get installed in the first pass.
 
           ## install vectors
-          install.packages("vctrs")
+          install.packages("vctrs", repos = "https://packagemanager.rstudio.com/cran/latest")
 
           ## Set the repos source depending on the OS
           ## Alternatively use https://storage.googleapis.com/bioconductor_docker/packages/
