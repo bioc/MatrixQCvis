@@ -140,6 +140,11 @@ jobs:
           ## Helps compile RCurl from source
           ## brew uninstall curl
 
+          ## Required for tcltk
+          brew install xquartz --cask
+
+          ## Required for jpeg
+          brew install jpeg
 
       - name: Install Windows system dependencies
         if: runner.os == 'Windows'
