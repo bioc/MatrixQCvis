@@ -189,6 +189,7 @@ jobs:
 
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
+          install.packages("promises", repos = gha_repos)
           install.packages(c("vctrs", "rcmdcheck", "BiocCheck"), repos = gha_repos)
 
           ## Pass #1 at installing dependencies
