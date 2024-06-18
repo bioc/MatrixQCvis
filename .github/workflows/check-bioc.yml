@@ -173,17 +173,15 @@ jobs:
           ## Ideally, all dependencies should get installed in the first pass.
 
           ## Pass #1 at installing dependencies
-          ##BiocManager::install("RforMassSpectrometry/ProtGenerics", ask = FALSE,force = TRUE)
           message(paste('****', Sys.time(), 'pass number 1 at installing dependencies: local dependencies ****'))
           remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE)
-          ##BiocManager::install("RforMassSpectrometry/MsCoreUtils", ask = FALSE, force = TRUE)
           ## Pass #2 at installing dependencies
           message(paste('****', Sys.time(), 'pass number 2 at installing dependencies: any remaining dependencies ****'))
           remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE)
 
           ## Manually install required packages
 
-          BiocManager::install(c("devtools", "usethis", "vdiffr"), dependencies = TRUE, ask = FALSE, update = FALSE)
+          BiocManager::install(c("devtools", "sva", "usethis", "vdiffr"), dependencies = TRUE, ask = FALSE, update = FALSE)
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
           remotes::install_cran("rcmdcheck")
