@@ -378,7 +378,10 @@ test_that("batchCorrectionAssay", {
     a_n <- batchCorrectionAssay(se_b, method = "none")
     a_l <- batchCorrectionAssay(se_b, method = "removeBatchEffect (limma)",
         batch = "type", batch2 = NULL)
+    a_c <- batchCorrectionAssay(se_b, method = "ComBat",
+        batch = "type", batch2 = NULL, par.prior = FALSE)
 
+    ## removeBatchEffect (limma)
     expect_error(batchCorrectionAssay(a, "removeBatchEffect (limma)"),
         "unable to find an inherited method for function")
     expect_error(batchCorrectionAssay(se_b, "foo"), "'arg' should be one of ")
@@ -394,15 +397,34 @@ test_that("batchCorrectionAssay", {
     expect_error(batchCorrectionAssay(se_b, "removeBatchEffect (limma)", 
         batch = NULL, batch2 = "foo"),
         "should be one of")
+    expect_equal(batchCorrectionAssay(se_b, "removeBatchEffect (limma)", 
+        batch = NULL, batch2 = NULL), a)
+    
+    ## ComBat
+    expect_error(batchCorrectionAssay(a, "ComBat"),
+        "unable to find an inherited method for function")
+    expect_error(batchCorrectionAssay(se_b, "ComBat", 
+        batch = "foo", batch2 = NULL),
+        "should be one of")
+    expect_error(batchCorrectionAssay(se_b, "ComBat", 
+        batch = "foo", batch2 = "foo"),
+        "should be one of")
+    expect_equal(batchCorrectionAssay(se_b, "ComBat", 
+        batch = NULL, batch2 = NULL), a)
+    
     expect_equal(a_n, a)
     expect_true(is.matrix(a_n))
     expect_true(is.matrix(a_l))
+    expect_true(is.matrix(a_c))
     expect_equal(dim(a_n), dim(a))
     expect_equal(dim(a_l), dim(a))
+    expect_equal(dim(a_c), dim(a))
     expect_equal(rownames(a_n), rownames(a))
     expect_equal(rownames(a_l), rownames(a))
+    expect_equal(rownames(a_c), rownames(a))
     expect_equal(colnames(a_n), colnames(a))
     expect_equal(colnames(a_l), colnames(a))
+    expect_equal(colnames(a_c), colnames(a))
 })
 
 ## function imputeAssay

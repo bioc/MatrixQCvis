@@ -1372,17 +1372,20 @@ normalizeAssay <- function(a,
 #' @description
 #' The function \code{batchCorrectionAssay} removes the batch effect of 
 #' (count/intensity) values of a \code{SummarizedExperiment}. 
-#' It uses either the \code{removeBatchEffect} function 
+#' It uses either the \code{removeBatchEffect} or \code{ComBat} functions 
 #' or no batch effect correction method (pass-through, 
 #' \code{none}).
 #'
 #' @details 
-#' The column \code{batchColumn} in \code{colData(se)} contains the information 
-#' on the batch identity. Internal use in \code{shinyQC}.
+#' The column \code{batch} in \code{colData(se)} contains the information 
+#' on the batch identity. For \code{method = "removeBatchEffect (limma)"},
+#' \code{batch2} may indicate a second series of batches. 
+#' Internal use in \code{shinyQC}.
 #' 
-#' If \code{batchColumn} is NULL, \code{batchColumn} is internally set to the 
-#' name of the first column in \code{colData(se)} if 
-#' \code{method = "removeBatchEffect (limma)"}.
+#' If \code{batch} is NULL and \code{method} is set to 
+#' \code{method = "removeBatchEffect (limma)"} or \code{method = "ComBat"},
+#' no batch correction will be performed (equivalent to 
+#' \code{method = "none"}).
 #' 
 #' @param se \code{SummarizedExperiment}
 #' @param method \code{character}, one of \code{"none"} or 
@@ -1391,7 +1394,8 @@ normalizeAssay <- function(a,
 #' \code{colnames(colData(se))}
 #' @param batch2 \code{character}, \code{NULL} or one of
 #' \code{colnames(colData(se))}
-#' @param ... further arguments passed to \code{removeBatchEffect} 
+#' @param ... further arguments passed to \code{removeBatchEffect} or 
+#' \code{ComBat} 
 #'
 #' @examples
 #' ## create se
@@ -1406,17 +1410,23 @@ normalizeAssay <- function(a,
 #' se <- SummarizedExperiment::SummarizedExperiment(assay = a, 
 #'     rowData = rD, colData = cD)
 #' 
+#' ## method = "removeBatchEffect (limma)"
 #' batchCorrectionAssay(se, method = "removeBatchEffect (limma)", 
+#'     batch = "batch", batch2 = NULL)
+#' 
+#' ## method = "ComBat"
+#' batchCorrectionAssay(se, method = "ComBat", 
 #'     batch = "batch", batch2 = NULL)
 #' 
 #' @return \code{matrix}
 #' 
 #' @importFrom limma removeBatchEffect
 #' @importFrom SummarizedExperiment assay
+#' @importFrom sva ComBat
 #' 
 #' @export
 batchCorrectionAssay <- function(se, 
-        method = c("none", "removeBatchEffect (limma)"), 
+        method = c("none", "removeBatchEffect (limma)", "ComBat"), 
         batch = NULL, batch2 = NULL, ...) {
     
     method <- match.arg(method)
@@ -1444,6 +1454,21 @@ batchCorrectionAssay <- function(se,
         ## perform batch correction
         a_b <- limma::removeBatchEffect(a_b, batch = batch, batch2 = batch2, 
             ...)
+    }
+    
+    if (method == "ComBat") {
+        
+        cD <- se@colData
+        
+        ## check, when batch is not NULL, that it matches with the colnames
+        ## of colData, assign the values of colData
+        if (!is.null(batch)) {
+            batch <- match.arg(batch, choices = colnames(cD))
+            batch <- cD[[batch]]
+            
+            ## perform batch correction, use default values
+            a_b <- sva::ComBat(a_b, batch = batch, ...)
+        }
     }
     
     rownames(a_b) <- rownames(a)

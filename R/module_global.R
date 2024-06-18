@@ -135,12 +135,12 @@ sidebar_assayUI <- function() {
         ## select type of batch correction
         shiny::selectInput(inputId = "batch",
             label = shiny::strong("Batch correction method"),
-            choices = c("none", "removeBatchEffect (limma)"), 
+            choices = c("none", "removeBatchEffect (limma)", "ComBat"), 
             selected = "none"),
         ## create conditional panel to select batch variable, use observe to
         ## update the choices
         shiny::conditionalPanel(
-            condition = "input.batch == 'removeBatchEffect (limma)'",
+            condition = "input.batch == 'removeBatchEffect (limma)' | input.batch == 'ComBat'",
                 shiny::selectInput("batchCol",
                     label = "Select column containing batch information",
                     choices = "name")),

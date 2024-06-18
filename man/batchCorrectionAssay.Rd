@@ -7,7 +7,7 @@
 \usage{
 batchCorrectionAssay(
   se,
-  method = c("none", "removeBatchEffect (limma)"),
+  method = c("none", "removeBatchEffect (limma)", "ComBat"),
   batch = NULL,
   batch2 = NULL,
   ...
@@ -25,7 +25,8 @@ batchCorrectionAssay(
 \item{batch2}{\code{character}, \code{NULL} or one of
 \code{colnames(colData(se))}}
 
-\item{...}{further arguments passed to \code{removeBatchEffect}}
+\item{...}{further arguments passed to \code{removeBatchEffect} or 
+\code{ComBat}}
 }
 \value{
 \code{matrix}
@@ -33,17 +34,20 @@ batchCorrectionAssay(
 \description{
 The function \code{batchCorrectionAssay} removes the batch effect of 
 (count/intensity) values of a \code{SummarizedExperiment}. 
-It uses either the \code{removeBatchEffect} function 
+It uses either the \code{removeBatchEffect} or \code{ComBat} functions 
 or no batch effect correction method (pass-through, 
 \code{none}).
 }
 \details{
-The column \code{batchColumn} in \code{colData(se)} contains the information 
-on the batch identity. Internal use in \code{shinyQC}.
+The column \code{batch} in \code{colData(se)} contains the information 
+on the batch identity. For \code{method = "removeBatchEffect (limma)"},
+\code{batch2} may indicate a second series of batches. 
+Internal use in \code{shinyQC}.
 
-If \code{batchColumn} is NULL, \code{batchColumn} is internally set to the 
-name of the first column in \code{colData(se)} if 
-\code{method = "removeBatchEffect (limma)"}.
+If \code{batch} is NULL and \code{method} is set to 
+\code{method = "removeBatchEffect (limma)"} or \code{method = "ComBat"},
+no batch correction will be performed (equivalent to 
+\code{method = "none"}).
 }
 \examples{
 ## create se
@@ -58,7 +62,12 @@ rD <- data.frame(spectra = rownames(a))
 se <- SummarizedExperiment::SummarizedExperiment(assay = a, 
     rowData = rD, colData = cD)
 
+## method = "removeBatchEffect (limma)"
 batchCorrectionAssay(se, method = "removeBatchEffect (limma)", 
+    batch = "batch", batch2 = NULL)
+
+## method = "ComBat"
+batchCorrectionAssay(se, method = "ComBat", 
     batch = "batch", batch2 = NULL)
 
 }
