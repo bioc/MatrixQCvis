@@ -183,7 +183,7 @@ jobs:
 
           ## Manually install required packages
 
-          # BiocManager::install(c("devtools", "usethis", "vdiffr"), dependencies = TRUE, ask = FALSE, update = FALSE)
+          # BiocManager::install(c("devtools", "sva", "usethis", "vdiffr"), dependencies = TRUE, ask = FALSE, update = FALSE)
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
           remotes::install_cran("rcmdcheck")
