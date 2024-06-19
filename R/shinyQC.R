@@ -155,7 +155,6 @@ shinyQC <- function(se, app_server = FALSE) {
                     ## SummarizedExperiment
                     sidebar_selectAssayUI(choicesAssaySE = choicesAssaySE)
             ))
-            
         ),
 
         shinydashboard::dashboardBody(shiny::fluidRow(
@@ -398,11 +397,14 @@ shinyQC <- function(se, app_server = FALSE) {
             probs = input$quantile, multiplyByNormalizationValue = TRUE)
     })
     
+    ## create SummarizedExperiment objects with updated assays
+    se_r_n <- shiny::reactive({updateSE(se = se_r(), assay = a_n())})
+    
     ## reactive expression for data batch correction, returns a matrix with
     ## batch-corrected values
     a_b <- shiny::reactive({
         batchCorrectionAssay(se_r_n(), method = input$batch, 
-            batchColumn = input$batchCol)
+            batch = input$batchCol)
     })
     
     shiny::observeEvent({shiny::req(input$batch); input$batch}, {
@@ -434,7 +436,7 @@ shinyQC <- function(se, app_server = FALSE) {
     })
     
     ## create SummarizedExperiment objects with updated assays
-    se_r_n <- shiny::reactive({updateSE(se = se_r(), assay = a_n())})
+    ##se_r_n <- shiny::reactive({updateSE(se = se_r(), assay = a_n())})
     se_r_b <- shiny::reactive({updateSE(se = se_r(), assay = a_b())})
     se_r_t <- shiny::reactive({updateSE(se = se_r(), assay = a_t())})
     se_r_i <- shiny::reactive({updateSE(se = se_r(), assay = a_i())})
@@ -453,7 +455,7 @@ shinyQC <- function(se, app_server = FALSE) {
     boxPlotServer("boxBatch", se = se_r_b,
         orderCategory = shiny::reactive(input[["boxUI-orderCategory"]]),
         boxLog = shiny::reactive(input$boxLog),
-        violin = shiny::reactive(input$violinPlot), type = "transformed")
+        violin = shiny::reactive(input$violinPlot), type = "batch corrected")
     boxPlotServer("boxTransf", se = se_r_t,
         orderCategory = shiny::reactive(input[["boxUI-orderCategory"]]),
         boxLog = function() FALSE,
@@ -498,7 +500,7 @@ shinyQC <- function(se, app_server = FALSE) {
         method = shiny::reactive(input$methodDistMat),
         label = shiny::reactive(input$groupDist), type = "transformed")
     distServer("distImp", se = se_r, assay = a_i,
-        method = shiny::reactive(input$methodDistMat), 
+        method = shiny::reactive(input$methodDistMat),
         label = shiny::reactive(input$groupDist), type = "imputed")
     
     ## Features
