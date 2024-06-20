@@ -873,23 +873,23 @@ maServer <-  function(id, se, se_n, se_b, se_t, se_i, innerWidth,
                     
                     if (input$MAtype == "raw") {
                         ma <- MAplot(vals_r(), group = input$groupMA, 
-                                     plot = input$plotMA)
+                            plot = input$plotMA)
                     }
                     if (input$MAtype == "normalized") {
                         ma <- MAplot(vals_n(), group = input$groupMA,
-                                     plot = input$plotMA)
+                            plot = input$plotMA)
                     }
                     if (input$MAtype == "batch corrected") {
                         ma <- MAplot(vals_b(), group = input$groupMA,
-                                     plot = input$plotMA)
+                            plot = input$plotMA)
                     }
                     if (input$MAtype == "transformed") {
                         ma <- MAplot(vals_t(), group = input$groupMA, 
-                                     plot = input$plotMA)
+                            plot = input$plotMA)
                     }
                     if (input$MAtype == "imputed") {
                         ma <- MAplot(vals_i(), group = input$groupMA,
-                                     plot = input$plotMA)
+                            plot = input$plotMA)
                     }
                     ma 
                 } else 
@@ -899,7 +899,7 @@ maServer <-  function(id, se, se_n, se_b, se_t, se_i, innerWidth,
             output$MAplot <- shiny::renderPlot({
                 if (!is.null(p_ma()))
                 p_ma()
-            }#, 
+            }#, height = shiny::reactive( ifelse(!is.null(innerWidth()), innerWidth() * 3 / 5, 0) )
                 #height = shiny::reactive(ifelse(!is.null(innerWidth()), 
                 #                                    innerWidth() * 3 / 5, 0))
             )
