@@ -1387,6 +1387,12 @@ normalizeAssay <- function(a,
 #' no batch correction will be performed (equivalent to 
 #' \code{method = "none"}).
 #' 
+#' The method \code{ComBat} will only perform batch correction on valid 
+#' features: (1) more or equal than two observations (no \code{NA}) per level 
+#' and per feature, (2) variance greater than 0 per feature, and (3) more than
+#' two valid features as given by (1) and (2). For non-valid features, values
+#' are taken from \code{assay(se)}.
+#'
 #' @param se \code{SummarizedExperiment}
 #' @param method \code{character}, one of \code{"none"} or 
 #' \code{"removeBatchEffect"}
@@ -1466,14 +1472,36 @@ batchCorrectionAssay <- function(se,
             batch <- match.arg(batch, choices = colnames(cD))
             batch <- cD[[batch]]
             
-            ## perform batch correction, use default values
-            a_b <- sva::ComBat(a_b, batch = batch, ...)
+            ## require at least 2 observations per feature and level
+            batch_u <- unique(batch)
+            keep_rows <- rep(TRUE, length(batch))
+            for (i in batch_u) {
+                sum_nas <- apply(a_b[, batch == i, drop = FALSE], 1, 
+                    FUN = function(row) sum(!is.na(row)))
+                keep_rows[sum_nas < 2] <- FALSE
+            }
+            
+            ## now check the variance, set keep_rows to FALSE if variance == 0
+            keep_rows[apply(a_b, 1, var, na.rm = TRUE) == 0] <- FALSE
+            
+            ## perform batch correction for the valid features (if there are
+            ## more or equal than 2), use default values
+            if (sum(keep_rows) >= 2) {
+                print(paste("Perform batch correction using", sum(keep_rows), 
+                    "features."))
+                a_b[keep_rows, ] <- sva::ComBat(a_b[keep_rows, ], batch = batch,
+                    ...)
+            } else {
+                print("No batch correction performed.")
+            }
         }
     }
     
+    ## assign rownames and colnames
     rownames(a_b) <- rownames(a)
     colnames(a_b) <- colnames(a)
     
+    ## return
     a_b
 }
 
