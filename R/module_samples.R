@@ -187,7 +187,8 @@ mosaicSampleServer <- function(id, se) {
                         ".pdf", sep = "")
                 },
                 content = function(file) {
-                    ggplot2::ggsave(file, p_mosaic(), device = "pdf")
+                    ggplot2::ggsave(file, p_mosaic(), device = "pdf",
+                        limitsize = FALSE)
                 }
             )
         }
