@@ -48,6 +48,12 @@ If \code{batch} is NULL and \code{method} is set to
 \code{method = "removeBatchEffect (limma)"} or \code{method = "ComBat"},
 no batch correction will be performed (equivalent to 
 \code{method = "none"}).
+
+The method \code{ComBat} will only perform batch correction on valid 
+features: (1) more or equal than two observations (no \code{NA}) per level 
+and per feature, (2) variance greater than 0 per feature, and (3) more than
+two valid features as given by (1) and (2). For non-valid features, values
+are taken from \code{assay(se)}.
 }
 \examples{
 ## create se
