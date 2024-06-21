@@ -1474,7 +1474,7 @@ batchCorrectionAssay <- function(se,
             
             ## require at least 2 observations per feature and level
             batch_u <- unique(batch)
-            keep_rows <- rep(TRUE, length(batch))
+            keep_rows <- rep(TRUE, nrow(se))
             for (i in batch_u) {
                 sum_nas <- apply(a_b[, batch == i, drop = FALSE], 1, 
                     FUN = function(row) sum(!is.na(row)))
