@@ -29,25 +29,7 @@ tag_loadMessage <- function() {
             $(window).resize(function(e) {
                 Shiny.onInputChange('innerWidth', window.innerWidth);
             });
-        ")),
-        ## loading panel when app busy
-        shiny::tags$head(shiny::tags$style(type="text/css", "
-                #loadmessage {
-                    position: fixed;
-                    top: 0px;
-                    left: 0px;
-                    width: 100%;
-                    padding: 5px 0px 5px 0px;
-                    text-align: center;
-                    font-weight: bold;
-                    font-size: 100%;
-                    color: #000000;
-                    background-color: #6495ED;
-                    z-index: 105;
-                }
-        ")),
-        shiny::conditionalPanel(condition = "$('html').hasClass('shiny-busy')",
-            shiny::tags$div("Loading...",id = "loadmessage"))      
+        "))
     )
 }
 
