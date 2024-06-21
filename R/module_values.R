@@ -205,7 +205,8 @@ boxPlotServer <- function(id, se, orderCategory, boxLog, violin, type) {
                     paste("Boxplot_violinplot_", type, ".pdf", sep = "")
                 },
                 content = function(file) {
-                    ggplot2::ggsave(file, p_boxplot(), device = "pdf")
+                    ggplot2::ggsave(file, p_boxplot(), device = "pdf",
+                        limitsize = FALSE)
                 }
             )
         }
@@ -256,7 +257,7 @@ tP_driftUI <- function(id) {
             ),
             shinydashboard::box(width = 12, collapsible = TRUE, 
                 collapsed = FALSE, title = "Parameters",
-                column(6,
+                shiny::column(6,
                     shiny::selectInput(
                         inputId = ns("category"),
                         label = "Select variable", choices = "name"),
@@ -268,7 +269,7 @@ tP_driftUI <- function(id) {
                         inputId = ns("orderCategory"),
                         label = "Select variable to order samples",
                         choices = "name")),
-                column(6,
+                shiny::column(6,
                     shiny::selectInput(inputId = ns("aggregation"), 
                         label = "Select aggregation",
                         choices = list("sum", "median"), selected = "sum"),
@@ -527,7 +528,8 @@ cvServer <- function(id, a_r, a_n, a_b, a_t, a_i, missingValue) {
                     paste("CV.pdf", sep = "")
                 },
                 content = function(file) {
-                    ggplot2::ggsave(file, p_cv(), device = "pdf")
+                    ggplot2::ggsave(file, p_cv(), device = "pdf",
+                        limitsize = FALSE)
                 }
             )
             
@@ -594,7 +596,7 @@ box_meanSdUI <- function(id, name) {
 #' @examples 
 #' tP_meanSdUI("")
 #' 
-#' @importFrom shiny tabPanel fluidRow conditionalPanel br
+#' @importFrom shiny tabPanel fluidRow conditionalPanel br column
 #' @importFrom shinyhelper helper
 #' 
 #' @noRd
@@ -661,7 +663,8 @@ meanSdServer <- function(id, assay, type) {
                     paste("Meansd_", type, ".pdf", sep = "")
                 },
                 content = function(file) {
-                    ggplot2::ggsave(file, p_meansd(), device = "pdf")
+                    ggplot2::ggsave(file, p_meansd(), device = "pdf",
+                        limitsize = FALSE)
                 }
             )
         }
@@ -694,7 +697,7 @@ meanSdServer <- function(id, assay, type) {
 #' @examples
 #' tP_maUI("test")
 #' 
-#' @importFrom shiny NS tabPanel fluidRow downloadButton
+#' @importFrom shiny NS tabPanel fluidRow downloadButton column
 #' @importFrom shiny plotOutput checkboxInput
 #' @importFrom shinydashboard box
 #' @importFrom plotly plotlyOutput
@@ -718,7 +721,7 @@ tP_maUI <- function(id) {
         shiny::fluidRow(
             shinydashboard::box(title = "MA plot per sample", width = 12, 
                 collapsible = TRUE, 
-                shiny::plotOutput(outputId = ns("MAplot")),
+                shiny::plotOutput(outputId = ns("MAplot"), height = "100%"),
                 shiny::downloadButton(outputId = ns("downloadPlotMA"), ""),
                 shiny::selectInput(
                     inputId = ns("MAtype"), label = "Data set for the MA plot",
@@ -784,7 +787,15 @@ maServer <-  function(id, se, se_n, se_b, se_t, se_i, innerWidth,
         id, 
         function(input, output, session) {
             
-                
+            ## create reactiveValues to store innerWidth, update if there are 
+            ## changes to the parameters
+            rv <- reactiveValues(
+                innerWidth = "600px")
+            
+            observeEvent(innerWidth(), {
+                rv$innerWidth <- innerWidth() * 2.5 / 5
+            })
+            
             ## access the colData slot and add the rownames as a new column to cD
             ## (will add the column "rowname")
             cD <- shiny::reactive({
@@ -821,10 +832,10 @@ maServer <-  function(id, se, se_n, se_b, se_t, se_i, innerWidth,
             shiny::observe({
                 if (missingValue) {
                     data_l <- list("raw", "normalized", "batch corrected", 
-                                        "transformed", "imputed")
+                        "transformed", "imputed")
                 } else {
                     data_l <- list("raw", "normalized", "batch corrected", 
-                                        "transformed")
+                        "transformed")
                 }
                 shiny::updateSelectInput(session = session, inputId = "MAtype",
                     choices = data_l)
@@ -899,10 +910,7 @@ maServer <-  function(id, se, se_n, se_b, se_t, se_i, innerWidth,
             output$MAplot <- shiny::renderPlot({
                 if (!is.null(p_ma()))
                 p_ma()
-            }#, height = shiny::reactive( ifelse(!is.null(innerWidth()), innerWidth() * 3 / 5, 0) )
-                #height = shiny::reactive(ifelse(!is.null(innerWidth()), 
-                #                                    innerWidth() * 3 / 5, 0))
-            )
+            }, height = reactive(rv$innerWidth), width = "auto")
             
             output$downloadPlotMA <- shiny::downloadHandler(
                 filename = function() {
@@ -910,7 +918,9 @@ maServer <-  function(id, se, se_n, se_b, se_t, se_i, innerWidth,
                         input$plotMA,".pdf", sep = "")
                 },
                 content = function(file) {
-                    ggplot2::ggsave(file, p_ma(), device = "pdf")
+                    ggplot2::ggsave(file, p_ma(), device = "pdf", 
+                        height = rv$innerWidth, width = rv$innerWidth, 
+                        units = "px", limitsize = FALSE)
                 }
             )
 
@@ -1109,7 +1119,8 @@ ECDFServer <- function(id, se, se_n, se_b, se_t, se_i, missingValue) {
                         input$sampleECDF, ".pdf", sep = "")
                 },
                 content = function(file) {
-                    ggplot2::ggsave(file, p_ecdf(), device = "pdf")
+                    ggplot2::ggsave(file, p_ecdf(), device = "pdf", 
+                        limitsize = FALSE)
                 }
             )
         }
@@ -1144,7 +1155,7 @@ ECDFServer <- function(id, se, se_n, se_b, se_t, se_i, missingValue) {
 #' @examples
 #' fR_distUI("test", "test")
 #' 
-#' @importFrom shiny NS fluidRow downloadButton 
+#' @importFrom shiny NS fluidRow downloadButton column
 #' @importFrom shinydashboard box
 #' @importFrom plotly plotlyOutput
 #' @importFrom shinyhelper helper
@@ -1480,7 +1491,8 @@ featureServer <- function(id, se, a, a_n, a_b, a_t, a_i, missingValue) {
                     paste("Features_", input$selectFeature, ".pdf", sep = "")
                 },
                 content = function(file) {
-                    ggplot2::ggsave(file, p_feature(), device = "pdf")
+                    ggplot2::ggsave(file, p_feature(), device = "pdf",
+                        limitsize = FALSE)
                 }
             )
             
