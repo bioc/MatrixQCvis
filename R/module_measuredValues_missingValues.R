@@ -459,7 +459,8 @@ upSetServer <- function(id, se, measured = TRUE) {
                     paste("upSet_measured_", measured, ".pdf", sep = "")
                 },
                 content = function(file) {
-                    ggplot2::ggsave(file, p_upset(), device = "pdf")
+                    ggplot2::ggsave(file, p_upset(), device = "pdf",
+                        limitsize = FALSE)
                 }
             )
         }
