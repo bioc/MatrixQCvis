@@ -620,7 +620,6 @@ tP_topDEUI <- function(id) {
 #' @importFrom shiny moduleServer renderUI br
 #' @importFrom shiny renderText verbatimTextOutput
 #' @importFrom DT renderDT DTOutput
-#' @importFrom ggplot2 ggsave
 #' @importFrom SummarizedExperiment colData
 #'
 #' @noRd
