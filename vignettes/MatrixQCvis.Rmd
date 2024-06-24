@@ -218,7 +218,8 @@ In addition, in the tabs `Values`,
  - normalization: currently the methods `sum`, `quantile divion`, `quantile`
    and `none`, i.e. no normalization, are supported;
  - batch correction: currently the methods `removeBatchEffect` from the `limma`
-   package [@Ritchie2015] and `none`, i.e. no batch correction, are supported.
+   package [@Ritchie2015], `ComBat` from the `sva` package, and 
+   `none`, i.e. no batch correction, are supported.
    It is highly advised to consult the dimension reduction plots before 
    performing any batch correction. Batch correction should not be done based 
    solely on (count/intensity) value distributions (boxplots/violin plots);
