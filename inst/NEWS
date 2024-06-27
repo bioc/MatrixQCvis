@@ -1,3 +1,10 @@
+Changes in version 1.13.5 (2024-06-27)
++ add log10 as transformation method in transformAssay
++ add "none" as imputation method in imputeAssay
++ update shiny application with log10
++ update vignette with log10
++ update unit tests with log10 and "none"
+
 Changes in version 1.13.4 (2024-06-24)
 + update vignette, add information on ComBat
 
