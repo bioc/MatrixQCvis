@@ -101,3 +101,4 @@ createLandingPage <- function(seUI = NULL, seLoad = NULL,
         invisible(NULL)
     }
 }
+
