@@ -1429,6 +1429,7 @@ normalizeAssay <- function(a,
 #' @importFrom limma removeBatchEffect
 #' @importFrom SummarizedExperiment assay
 #' @importFrom sva ComBat
+#' @importFrom stats var
 #' 
 #' @export
 batchCorrectionAssay <- function(se, 
@@ -1482,7 +1483,7 @@ batchCorrectionAssay <- function(se,
             }
             
             ## now check the variance, set keep_rows to FALSE if variance == 0
-            keep_rows[apply(a_b, 1, var, na.rm = TRUE) == 0] <- FALSE
+            keep_rows[apply(a_b, 1, stats::var, na.rm = TRUE) == 0] <- FALSE
             
             ## perform batch correction for the valid features (if there are
             ## more or equal than 2), use default values
@@ -1512,8 +1513,8 @@ batchCorrectionAssay <- function(se,
 #' 
 #' @description
 #' The function \code{transformAssay} transforms the (count/intensity) values 
-#' of a  \code{matrix}. It uses either \code{log}, \code{log2}, variance 
-#' stabilizing normalisation (\code{vsn}) or no transformation method 
+#' of a  \code{matrix}. It uses either \code{log}, \code{log2}, \code{log10},  
+#' variance stabilizing normalisation (\code{vsn}) or no transformation method 
 #' (pass-through, \code{none}). The object
 #' \code{x} has the samples in the columns and the features in the rows.
 #'
@@ -1522,9 +1523,10 @@ batchCorrectionAssay <- function(se,
 #' 
 #' @param a \code{matrix} with samples in columns and features in rows
 #' @param method \code{character}, one of \code{"none"}, \code{"log"}, 
-#' \code{"log2"} or \code{"vsn"}
+#' \code{"log2"}, \code{"log10"}, or \code{"vsn"}
 #' @param .offset \code{numeric(1)}, offset to add when \code{method} set to
-#' \code{"log"} or \code{"log2"} and \code{a} contains values of 0, default to 1 
+#' \code{"log"}, \code{"log2"}, or \code{"log10"} and 
+#' \code{a} contains values of 0, default to 1 
 #'
 #' @examples
 #' a <- matrix(seq_len(1000), nrow = 100, ncol = 10, 
@@ -1539,7 +1541,7 @@ batchCorrectionAssay <- function(se,
 #' @importFrom vsn vsn2
 #' 
 #' @export
-transformAssay <- function(a, method = c("none", "log", "log2", "vsn"),
+transformAssay <- function(a, method = c("none", "log", "log2", "log10", "vsn"),
     .offset = 1) {
     
     if (!is.matrix(a)) stop("a is not a matrix")
@@ -1562,6 +1564,13 @@ transformAssay <- function(a, method = c("none", "log", "log2", "vsn"),
             a_t <- log2(a_t + .offset)
         } else {
             a_t <- log2(a_t)
+        }
+    }
+    if (method == "log10") {
+        if (any(a == 0, na.rm = TRUE)) {
+            a_t <- log10(a_t + .offset)
+        } else {
+            a_t <- log10(a_t)
         }
     }
     if (method == "vsn") {
@@ -1617,10 +1626,13 @@ transformAssay <- function(a, method = c("none", "log", "log2", "vsn"),
 #' mean set to the minimal value of a sample. \code{MinProb} is a 
 #' MNAR imputation method.
 #' 
+#' \code{MinProb} does not impute values (not available within shiny 
+#' application).  
+#' 
 #' @param a \code{matrix} with samples in columns and features in rows
 #' @param method \code{character}, one of \code{"BPCA"}, \code{"kNN"}, 
 #' \code{"MLE"}, \code{"Min"}, 
-#' \code{"MinDet"}, or \code{"MinProb"}
+#' \code{"MinDet"}, \code{"MinProb"}, or \code{"none"}
 #'
 #' @examples
 #' a <- matrix(seq_len(100), nrow = 10, ncol = 10, 
@@ -1640,7 +1652,7 @@ transformAssay <- function(a, method = c("none", "log", "log2", "vsn"),
 #' 
 #' @export
 imputeAssay <- function(a,
-    method = c("BPCA", "kNN", "MLE", "Min", "MinDet", "MinProb")) {
+    method = c("BPCA", "kNN", "MLE", "Min", "MinDet", "MinProb", "none")) {
 
     if (!is.matrix(a)) stop("a is not a matrix")
     method <- match.arg(method)

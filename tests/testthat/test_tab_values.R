@@ -344,6 +344,7 @@ test_that("transformAssay", {
     a_n <- transformAssay(a, method = "none")
     a_l <- transformAssay(a, method = "log")
     a_l2 <- transformAssay(a, method = "log2")
+    a_l10 <- transformAssay(a, method = "log10")
     a_v <- transformAssay(a, method = "vsn")
 
     expect_error(transformAssay(se), "a is not a matrix")
@@ -355,17 +356,21 @@ test_that("transformAssay", {
     expect_true(is.matrix(a_v))
     expect_equal(a_l, log(a))
     expect_equal(a_l2, log2(a))
+    expect_equal(a_l10, log10(a))
     expect_equal(dim(a_n), dim(a))
     expect_equal(dim(a_l), dim(a))
     expect_equal(dim(a_l2), dim(a))
+    expect_equal(dim(a_l10), dim(a))
     expect_equal(dim(a_v), dim(a))
     expect_equal(rownames(a_n), rownames(a))
     expect_equal(rownames(a_l), rownames(a))
     expect_equal(rownames(a_l2), rownames(a))
+    expect_equal(rownames(a_l10), rownames(a))
     expect_equal(rownames(a_v), rownames(a))
     expect_equal(colnames(a_n), colnames(a))
     expect_equal(colnames(a_l), colnames(a))
     expect_equal(colnames(a_l2), colnames(a))
+    expect_equal(colnames(a_l10), colnames(a))
     expect_equal(colnames(a_v), colnames(a))
 })
 
@@ -435,6 +440,7 @@ test_that("imputeAssay", {
     a_min <- imputeAssay(a, "Min")
     a_mindet <- imputeAssay(a, "MinDet")
     a_minprob <- imputeAssay(a, "MinProb")
+    a_none <- imputeAssay(a, "none")
 
     expect_error(imputeAssay(se), "a is not a matrix")
     expect_error(imputeAssay(se, "foo"), "a is not a matrix")
@@ -443,21 +449,25 @@ test_that("imputeAssay", {
     expect_true(is.matrix(a_min))
     expect_true(is.matrix(a_mindet))
     expect_true(is.matrix(a_minprob))
+    expect_true(is.matrix(a_none))
     expect_equal(dim(a_bpca), dim(a))
     expect_equal(dim(a_knn), dim(a))
     expect_equal(dim(a_min), dim(a))
     expect_equal(dim(a_mindet), dim(a))
     expect_equal(dim(a_minprob), dim(a))
+    expect_equal(dim(a_none), dim(a))
     expect_equal(rownames(a_bpca), rownames(a))
     expect_equal(rownames(a_knn), rownames(a))
     expect_equal(rownames(a_min), rownames(a))
     expect_equal(rownames(a_mindet), rownames(a))
     expect_equal(rownames(a_minprob), rownames(a))
+    expect_equal(rownames(a_none), rownames(a))
     expect_equal(colnames(a_bpca), colnames(a))
     expect_equal(colnames(a_knn), colnames(a))
     expect_equal(colnames(a_min), colnames(a))
     expect_equal(colnames(a_mindet), colnames(a))
     expect_equal(colnames(a_minprob), colnames(a))
+    expect_equal(colnames(a_none), colnames(a))
     expect_equal(as.vector(a[1, seq_len(6)]), c(NA, NA, NA, NA, NA, 501.0773),
         tolerance = 1e-04)
     expect_equal(as.vector(a[5, seq_len(6)]), c(NA, NA, NA, NA, NA, 505.9916),
@@ -492,6 +502,7 @@ test_that("imputeAssay", {
     expect_equal(as.vector(a_minprob[5, seq_len(6)]),
         c(550.3846, 479.6420, 547.0334, 449.2677, 429.0399, 505.9916),
         tolerance = 1e-04)
+    expect_equal(a_none, a)
 })
 
 

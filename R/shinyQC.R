@@ -420,7 +420,8 @@ shinyQC <- function(se, app_server = FALSE) {
     ## reactive expression for data transformation, returns a matrix with
     ## transformed values
     a_t <- shiny::reactive({
-        ## input$transformation is either "none", "log", "log2", or "vsn"
+        ## input$transformation is either "none", "log", "log2", "log10",
+        ## or "vsn"
         transformAssay(a_b(), method = input$transformation)
     })
     

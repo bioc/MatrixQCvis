@@ -130,7 +130,8 @@ sidebar_assayUI <- function() {
         ## select type of transformation
         shiny::selectInput(inputId = "transformation",
             label = shiny::strong("Transformation method"),
-            choices = c("none", "log", "log2", "vsn"), selected = "none")
+            choices = c("none", "log", "log2", "log10", "vsn"), 
+            selected = "none")
         )
 }
 
@@ -145,6 +146,8 @@ sidebar_assayUI <- function() {
 #' \code{sidebar_assayUI} returns the HTML code for the sidebar in the tabs
 #' \code{Values} and \code{Dimension Reduction}. Internal function for 
 #' \code{shinyQC}.
+#' 
+#' Method \code{"none"} is not available within the shiny application.
 #' 
 #' @return \code{shiny.tag.list} with HTML content
 #' 

@@ -4,14 +4,17 @@
 \alias{imputeAssay}
 \title{Impute missing values in a \code{matrix}}
 \usage{
-imputeAssay(a, method = c("BPCA", "kNN", "MLE", "Min", "MinDet", "MinProb"))
+imputeAssay(
+  a,
+  method = c("BPCA", "kNN", "MLE", "Min", "MinDet", "MinProb", "none")
+)
 }
 \arguments{
 \item{a}{\code{matrix} with samples in columns and features in rows}
 
 \item{method}{\code{character}, one of \code{"BPCA"}, \code{"kNN"}, 
 \code{"MLE"}, \code{"Min"}, 
-\code{"MinDet"}, or \code{"MinProb"}}
+\code{"MinDet"}, \code{"MinProb"}, or \code{"none"}}
 }
 \value{
 \code{matrix}
@@ -54,6 +57,9 @@ from each sample. \code{MinDet} is a MNAR imputation method.
 imputation based on random draws from a Gaussion distribution with the 
 mean set to the minimal value of a sample. \code{MinProb} is a 
 MNAR imputation method.
+
+\code{MinProb} does not impute values (not available within shiny 
+application).
 }
 \examples{
 a <- matrix(seq_len(100), nrow = 10, ncol = 10, 
