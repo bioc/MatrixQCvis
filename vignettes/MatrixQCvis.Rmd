@@ -223,7 +223,7 @@ In addition, in the tabs `Values`,
    It is highly advised to consult the dimension reduction plots before 
    performing any batch correction. Batch correction should not be done based 
    solely on (count/intensity) value distributions (boxplots/violin plots);
- - transformation: currently the methods `log`, `log2`, `vsn` 
+ - transformation: currently the methods `log`, `log2`, `log10`, `vsn` 
    (variance stabilizing normalization/transformation, @Huber2002), and `none`, i.e.
    no transformation, are supported;
  - imputation (only for `SummarizedExperiment` containing missing values): 
@@ -737,9 +737,12 @@ The output will be (only the first 20 rows will be shown here):
 
 ```{r topDE, echo=FALSE, eval=TRUE, warning=FALSE, message=FALSE}
 a <- assay(se)
-a_n <- a %>% normalizeAssay(., "none")
-a_t <- a_n %>% transformAssay(., "none")
-a_i <- a_t %>% imputeAssay(., "MinDet")
+a_n <- a |>
+    normalizeAssay(method = "none")
+a_t <- a_n |>
+    transformAssay(method = "none")
+a_i <- a_t |>
+    imputeAssay(method = "MinDet")
 
 fit <- lmFit(a_i, design = mM)
 fit <- contrasts.fit(fit, contrasts = cM)
@@ -784,8 +787,8 @@ tbl <- tbl |>
 
 ## using the information from protein_id/cell_line calculate the mean expression
 ## from the protein_expression values, 
-tbl_mean <- tbl %>%
-    dplyr::group_by(protein_id, cell_line) %>%
+tbl_mean <- tbl |>
+    dplyr::group_by(protein_id, cell_line) |>
     dplyr::summarise(mean_expression = mean(protein_expression, na.rm = TRUE), 
         .groups = "drop") 
 
