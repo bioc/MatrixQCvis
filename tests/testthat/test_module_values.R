@@ -2,14 +2,14 @@
 #' @importFrom shiny testServer
 
 ## create se
-a <- matrix(seq_len(1000), nrow = 100, ncol = 10, 
+a <- matrix(seq_len(1000), nrow = 100, ncol = 10,
     dimnames = list(seq_len(100), paste("sample", seq_len(10))))
 a[c(1, 5, 8), seq_len(5)] <- NA
 set.seed(1)
 a <- a + rnorm(1000)
 cD <- data.frame(name = colnames(a), type = c(rep("1", 5), rep("2", 5)))
 rD <- data.frame(spectra = rownames(a))
-se <- SummarizedExperiment::SummarizedExperiment(assay = a, rowData = rD, 
+se <- SummarizedExperiment::SummarizedExperiment(assay = a, rowData = rD,
                             colData = cD)
 
 ## function fR_boxplotUI
@@ -25,40 +25,41 @@ test_that("tP_boxplotUI", {
 
 ## boxPlotUIServer
 test_that("boxPlotUIServer", {
-    shiny::testServer(boxPlotUIServer, {
+    shiny::testServer(app = boxPlotUIServer, expr = {
         input <- new.env()
         output <- new.env()
         session <- new.env()
         se <- new.env()
         missingValue <- new.env()
-        
-        out <- boxPlotUIServer("", se = se)
+
+        out <- boxPlotUIServer("test_module", se = se)
         expect_is(out, "Observer")
-        out <- boxPlotUIServer("", se = se)
+        out <- boxPlotUIServer("test_module", se = se)
         expect_is(out, "Observer")
     })
 })
 
 ## boxPlotServer
 test_that("boxPlotServer", {
-    shiny::testServer(boxPlotServer, {
-        input <- new.env()    
+    shiny::testServer(app = boxPlotServer, expr = {
+        input <- new.env()
         output <- new.env()
         session <- new.env()
         se <- new.env()
         orderCategory <- new.env()
         boxLog <- new.env()
         violin <- new.env()
-        
-        out <- boxPlotServer("", se = se, orderCategory = orderCategory, 
-            boxLog = boxLog, violin = violin, type = "test")
+
+        out <- boxPlotServer("test_module", se = se,
+            orderCategory = orderCategory, boxLog = boxLog, violin = violin,
+            type = "test")
         expect_is(out, "shiny.render.function")
     })
 })
 
 ## driftServer
 test_that("driftServer", {
-    shiny::testServer(driftServer, {
+    shiny::testServer(app = driftServer, expr = {
         input <- new.env()
         output <- new.env()
         session <- new.env()
@@ -70,12 +71,12 @@ test_that("driftServer", {
         dataType <- new.env()
         aggregation <- new.env()
         method <- new.env()
-        
-        out <- driftServer("", se = se, se_n = se_n, se_b = se_b, se_t = se_t, 
-            se_i = se_i, missingValue = TRUE)
+
+        out <- driftServer("test_module", se = se, se_n = se_n, se_b = se_b,
+            se_t = se_t, se_i = se_i, missingValue = TRUE)
         expect_is(out, "shiny.render.function")
-        out <- driftServer("", se = se, se_n = se_n, se_b = se_b, se_t = se_t, 
-            se_i = se_i, missingValue = FALSE)
+        out <- driftServer("test_module", se = se, se_n = se_n, se_b = se_b,
+            se_t = se_t, se_i = se_i, missingValue = FALSE)
         expect_is(out, "shiny.render.function")
     })
 })
@@ -93,7 +94,7 @@ test_that("tP_cvUI", {
 
 ## cvServer
 test_that("cvServer", {
-    shiny::testServer(cvServer, {
+    shiny::testServer(app = cvServer, expr = {
         input <- new.env()
         output <- new.env()
         session <- new.env()
@@ -102,12 +103,12 @@ test_that("cvServer", {
         a_b <- new.env()
         a_t <- new.env()
         a_i <- new.env()
-        
-        out <- cvServer("", a_r = a_r, a_n = a_n, a_b = a_b, a_t = a_t,
-            a_i = a_i, missingValue = TRUE)
+
+        out <- cvServer("test_module", a_r = a_r, a_n = a_n, a_b = a_b,
+            a_t = a_t, a_i = a_i, missingValue = TRUE)
         expect_is(out, "shiny.render.function")
-        out <- cvServer("", a_r = a_r, a_n = a_n, a_b = a_b, a_t = a_t,
-            a_i = a_i, missingValue = FALSE)
+        out <- cvServer("test_module", a_r = a_r, a_n = a_n, a_b = a_b,
+            a_t = a_t, a_i = a_i, missingValue = FALSE)
         expect_is(out, "shiny.render.function")
     })
 })
@@ -124,16 +125,16 @@ test_that("tP_meanSdUI", {
 
 ## meanSdServer
 test_that("meanSdServer", {
-    shiny::testServer(meanSdServer, {
-        input <- new.env()    
+    shiny::testServer(app = meanSdServer, expr = {
+        input <- new.env()
         output <- new.env()
         session <- new.env()
         assay <- new.env()
-        
-        out <- meanSdServer("", assay = assay, type = "test")
+
+        out <- meanSdServer("test_module", assay = assay, type = "test")
         expect_is(out, "shiny.render.function")
     })
-    
+
 })
 
 # tP_maUI
@@ -143,8 +144,8 @@ test_that("tP_maUI", {
 
 ## maServer
 test_that("maServer", {
-    shiny::testServer(maServer, {
-        input <- new.env()    
+    shiny::testServer(app = maServer, expr = {
+        input <- new.env()
         output <- new.env()
         session <- new.env()
         se <- new.env()
@@ -153,12 +154,14 @@ test_that("maServer", {
         se_t <- new.env()
         se_i <- new.env()
         innerWidth <- new.env()
-        
-        out <- maServer("", se = se, se_n = se_n, se_b = se_b, se_t = se_t,
-            se_i = se_i, innerWidth = innerWidth, missingValue = TRUE)
+
+        out <- maServer("test_module", se = se, se_n = se_n, se_b = se_b,
+            se_t = se_t, se_i = se_i, innerWidth = innerWidth,
+            missingValue = TRUE)
         expect_is(out, "shiny.render.function")
-        out <- maServer("", se = se, se_n = se_n, se_b = se_b, se_t = se_t,
-            se_i = se_i, innerWidth = innerWidth, missingValue = FALSE)
+        out <- maServer("test_module", se = se, se_n = se_n, se_b = se_b,
+            se_t = se_t, se_i = se_i, innerWidth = innerWidth,
+            missingValue = FALSE)
         expect_is(out, "shiny.render.function")
     })
 })
@@ -170,8 +173,8 @@ test_that("tP_ECDFUI", {
 
 ## ECDFServer
 test_that("ECDFServer", {
-    shiny::testServer(ECDFServer, {
-        input <- new.env()    
+    shiny::testServer(app = ECDFServer, expr = {
+        input <- new.env()
         output <- new.env()
         session <- new.env()
         se <- new.env()
@@ -179,12 +182,12 @@ test_that("ECDFServer", {
         se_b <- new.env()
         se_t <- new.env()
         se_i <- new.env()
-        
-        out <- ECDFServer("", se = se, se_n = se_n, se_b = se_b, se_t = se_t,
-            se_i = se_i, missingValue = TRUE)
+
+        out <- ECDFServer("test_module", se = se, se_n = se_n, se_b = se_b,
+            se_t = se_t, se_i = se_i, missingValue = TRUE)
         expect_is(out, "shiny.render.function")
-        out <- ECDFServer("", se = se, se_n = se_n, se_b = se_b, se_t = se_t,
-            se_i = se_i, missingValue = FALSE)
+        out <- ECDFServer("test_module", se = se, se_n = se_n, se_b = se_b,
+            se_t = se_t, se_i = se_i, missingValue = FALSE)
         expect_is(out, "shiny.render.function")
     })
 })
@@ -197,17 +200,17 @@ test_that("fR_distUI", {
 
 ## distServer
 test_that("distServer", {
-    shiny::testServer(distServer, {
-        input <- new.env()    
+    shiny::testServer(app = distServer, expr = {
+        input <- new.env()
         output <- new.env()
         session <- new.env()
         se <- new.env()
         assay <- new.env()
         method <- new.env()
         label <- new.env()
-        
-        out <- distServer("", se = se, assay = assay, method = method, 
-            label = label, type = "test")
+
+        out <- distServer("test_module", se = se, assay = assay,
+            method = method, label = label, type = "test")
         expect_is(out, "shiny.render.function")
     })
 })
@@ -219,8 +222,8 @@ test_that("tP_distUI", {
 
 ## featureServer
 test_that("featureServer", {
-    shiny::testServer(featureServer, {
-        input <- new.env()    
+    shiny::testServer(app = featureServer, expr = {
+        input <- new.env()
         output <- new.env()
         session <- new.env()
         se <- reactive(se)
@@ -229,12 +232,12 @@ test_that("featureServer", {
         a_b <- new.env()
         a_t <- new.env()
         a_i <- new.env()
-        
-        out <- featureServer(id = "", se = se, a = a, a_n = a_n, a_b = a_b,
-            a_t = a_t, a_i = a_i, missingValue = TRUE)
+
+        out <- featureServer(id = "test_module", se = se, a = a, a_n = a_n,
+            a_b = a_b, a_t = a_t, a_i = a_i, missingValue = TRUE)
         expect_is(out, "shiny.render.function")
-        out <- featureServer(id = "", se = se, a = a, a_n = a_n, a_b = a_b, 
-            a_t = a_t, a_i = a_i, missingValue = FALSE)
+        out <- featureServer(id = "test_module", se = se, a = a, a_n = a_n,
+            a_b = a_b, a_t = a_t, a_i = a_i, missingValue = FALSE)
         expect_is(out, "shiny.render.function")
     })
 })
@@ -248,4 +251,3 @@ test_that("tP_featureUI", {
 test_that("tP_values_all", {
     expect_is(tP_values_all(), "shiny.tag")
 })
-
