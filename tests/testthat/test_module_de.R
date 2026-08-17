@@ -39,7 +39,7 @@ test_that("tP_volcanoUI", {
 
 ## colDataServer
 test_that("colDataServer", {
-    shiny::testServer(app = colDataServer, exprs = {
+    shiny::testServer(app = colDataServer, expr = {
         input <- new.env()
         output <- new.env()
         session <- new.env()
