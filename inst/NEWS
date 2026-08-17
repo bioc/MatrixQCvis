@@ -1,4 +1,7 @@
-Changes in version 1.21.0 (2026-08-04)
+Changes in version 1.20.2 (2026-08-17)
++ fix typo in test_that for shiny::testServer (exprs instead of expr) 
+
+Changes in version 1.20.1 (2026-08-04)
 + fix error by adding namespaces to shiny::testServer
 
 Changes in version 1.17.1 (2025-06-26)
